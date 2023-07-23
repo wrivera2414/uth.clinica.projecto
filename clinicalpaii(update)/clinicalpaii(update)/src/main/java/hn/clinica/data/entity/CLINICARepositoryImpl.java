@@ -66,5 +66,19 @@ public class CLINICARepositoryImpl {
 				
 			}
 	}
+		
+		public ResponseConsulta getConsulta() throws IOException{
+			
+			Call<ResponseConsulta> call = client.getDataService().obtenerConsulta();
+			Response<ResponseConsulta> response = call.execute(); // AQUI ES DONDE SE CONSULTA A LA URL DE LA BASE DE DATOS.
+			if(response.isSuccessful()) {
+				return response.body();
+			}
+			else 
+			{
+				return null;
+				
+			}
 
+}
 }

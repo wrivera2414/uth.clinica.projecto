@@ -4,9 +4,7 @@ import java.io.IOException;
 
 import hn.clinica.data.entity.CLINICARepositoryImpl;
 import hn.clinica.data.entity.ResponseCitas;
-import hn.clinica.data.entity.ResponsePacientes;
 import hn.clinica.views.citas.CitasViewModel;
-import hn.clinica.views.pacientes.PacientesViewModel;
 
 public class CitasInteractorImpl implements CitasInteractor {
 	
@@ -21,7 +19,6 @@ public class CitasInteractorImpl implements CitasInteractor {
 		this.modelo = CLINICARepositoryImpl.getInstance("https://apex.oracle.com/", 60000L);
 		this.vista = vista;
 	}
-
 
 	@Override
 	public void consultarCitas() {

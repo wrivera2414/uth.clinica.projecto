@@ -41,7 +41,6 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 	private static final String PACIENTES_ID = "pacientesID";
 	private final String PACIENTES_EDIT_ROUTE_TEMPLATE = "pacientes/%s/edit";
     private final Grid<Pacientes> grid = new Grid<>(Pacientes.class, false);
-
     private TextField nombre;
     private TextField identidad;
     private TextField telefono;
@@ -122,6 +121,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     }
 
     @Override
+    
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<String> pacientesId = event.getRouteParameters().get(PACIENTES_ID);
         boolean encontrado = false;
