@@ -1,10 +1,7 @@
 package hn.clinica.views.citas;
-import com.fasterxml.jackson.annotation.JacksonInject.Value;
-import com.helger.commons.collection.attr.IAttributeContainer.IBeforeSetValueCallback;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -27,16 +24,9 @@ import hn.clinica.data.controller.CitasInteractor;
 import hn.clinica.data.controller.CitasInteractorImpl;
 import hn.clinica.data.entity.Citas;
 import hn.clinica.views.MainLayout;
-
-import java.text.DateFormat;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.IntBinaryOperator;
-
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Citas")
