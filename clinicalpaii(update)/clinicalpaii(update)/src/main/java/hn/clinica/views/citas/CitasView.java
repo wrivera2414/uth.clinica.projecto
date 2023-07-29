@@ -164,7 +164,9 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 
         FormLayout formLayout = new FormLayout();
         idcita = new TextField("Numero de Cita");
+        idcita.setPrefixComponent(VaadinIcon.USER_CARD.create());
         fecha = new TextField("Fecha");
+        fecha .setPrefixComponent(VaadinIcon.DATE_INPUT.create());
         paciente = new TextField("Paciente");
         paciente.setPrefixComponent(VaadinIcon.USER.create());
         direccion = new TextField("Direccion");
@@ -172,6 +174,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         telefono = new TextField("Telefono");
         telefono.setPrefixComponent(VaadinIcon.PHONE_LANDLINE.create());
         detalle = new TextArea("Detalle");
+        detalle.setPrefixComponent(VaadinIcon.INFO_CIRCLE.create());
         detalle.setLabel("Comentario");
         detalle.setMaxLength(140);
         detalle.setValueChangeMode(ValueChangeMode.EAGER);
