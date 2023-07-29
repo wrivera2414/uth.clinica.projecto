@@ -40,6 +40,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 
     private TextField idcita;
     private TextField fecha;
+    private TextField identidad;
     private TextField paciente;
     private TextField direccion;
     private TextField telefono;
@@ -74,6 +75,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         // Configure Grid
         grid.addColumn("idcita").setAutoWidth(true);
         grid.addColumn("fecha").setAutoWidth(true);
+        grid.addColumn("identidad").setAutoWidth(true);
         grid.addColumn("paciente").setAutoWidth(true);
         grid.addColumn("direccion").setAutoWidth(true);
         grid.addColumn("telefono").setAutoWidth(true);
@@ -87,10 +89,14 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         grid.asSingleSelect().addValueChangeListener(event -> {
         	clearForm();
             if (event.getValue() != null) {
+                identidad.setReadOnly(true);
+
                 UI.getCurrent().navigate(String.format(CITAS_EDIT_ROUTE_TEMPLATE, event.getValue().getIdcita()));
             } else {
                 clearForm();
                 UI.getCurrent().navigate(CitasView.class);
+                identidad.setReadOnly(false);
+
             }
         });
 
@@ -107,6 +113,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         cancel.addClickListener(e -> {
             clearForm();
             refreshGrid();
+            identidad.setReadOnly(false);
+
         });
 
         save.addClickListener(e -> {
@@ -167,13 +175,21 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         idcita.setPrefixComponent(VaadinIcon.USER_CARD.create());
         fecha = new TextField("Fecha");
         fecha .setPrefixComponent(VaadinIcon.DATE_INPUT.create());
+        fecha.setHelperText("Horario de 8:00AM a 4:00PM");
+        identidad = new TextField("Identidad");
+        identidad.setPlaceholder("Busqueda Paciente");
+        identidad.setPrefixComponent(VaadinIcon.BACKSPACE.create());
         paciente = new TextField("Paciente");
+        paciente.setReadOnly(true);
         paciente.setPrefixComponent(VaadinIcon.USER.create());
         direccion = new TextField("Direccion");
+        direccion.setReadOnly(true);
         direccion.setPrefixComponent(VaadinIcon.LOCATION_ARROW.create());
         telefono = new TextField("Telefono");
+        telefono.setReadOnly(true);
         telefono.setPrefixComponent(VaadinIcon.PHONE_LANDLINE.create());
         detalle = new TextArea("Detalle");
+        detalle.setPlaceholder("Ingrese el detalle de la cita");
         detalle.setPrefixComponent(VaadinIcon.INFO_CIRCLE.create());
         detalle.setLabel("Comentario");
         detalle.setMaxLength(140);
@@ -182,12 +198,12 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
             e.getSource()
                     .setHelperText(e.getValue().length() + "/" + (140));
         });
-        detalle.setValue("Detalle de la cita");
+        //detalle.setValue("Detalle de la cita");
         add(detalle);
-        formLayout.add(idcita, fecha, paciente, direccion, telefono, detalle);
+        formLayout.add(idcita, fecha, identidad, paciente, direccion, telefono, detalle);
 
         editorDiv.add(formLayout);
-        createButtonLayout(editorLayoutDiv);
+        createButtonLayout(editorLayoutDiv); 
 
         splitLayout.addToSecondary(editorLayoutDiv);
     }
@@ -221,6 +237,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         if(value == null){
             this.idcita.setValue("");
         	this.fecha.setValue("");
+        	this.identidad.setValue("");
         	this.paciente.setValue("");
         	this.direccion.setValue("");
         	this.telefono.setValue("");
@@ -229,6 +246,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         else {
         	this.idcita.setValue(value.getIdcita());
         	this.fecha.setValue(value.getFecha());
+        	this.identidad.setValue(value.getIdentidad());
         	this.paciente.setValue(value.getPaciente());
         	this.direccion.setValue(value.getDireccion());
         	this.telefono.setValue(value.getTelefono());

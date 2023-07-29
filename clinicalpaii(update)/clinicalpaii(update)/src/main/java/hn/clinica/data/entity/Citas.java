@@ -8,6 +8,7 @@ public class Citas extends AbstractEntity {
 
     private String idcita;
     private String fecha;
+    private String identidad;
     private String paciente;
     private String direccion;
     private String telefono;
@@ -20,7 +21,7 @@ public class Citas extends AbstractEntity {
         this.idcita = idcita;
     }
     public String getFecha() {
-        return fecha;
+        return fecha; 
     }
     public void setFecha(String fecha) {
         this.fecha = fecha;
@@ -49,6 +50,12 @@ public class Citas extends AbstractEntity {
 	}
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
+	}
+	public String getIdentidad() {
+		return identidad;
+	}
+	public void setIdentidad(String identidad) {
+		this.identidad = identidad;
 	}
 
 }
