@@ -1,7 +1,10 @@
 package hn.clinica.views.citas;
+import com.fasterxml.jackson.annotation.JacksonInject.Value;
+import com.helger.commons.collection.attr.IAttributeContainer.IBeforeSetValueCallback;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -24,9 +27,16 @@ import hn.clinica.data.controller.CitasInteractor;
 import hn.clinica.data.controller.CitasInteractorImpl;
 import hn.clinica.data.entity.Citas;
 import hn.clinica.views.MainLayout;
+
+import java.text.DateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.IntBinaryOperator;
+
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Citas")
@@ -173,9 +183,31 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         FormLayout formLayout = new FormLayout();
         idcita = new TextField("Numero de Cita");
         idcita.setPrefixComponent(VaadinIcon.USER_CARD.create());
-        fecha = new TextField("Fecha");
+        fecha = new TextField("Fecha");        
+        //fecha = new DateTimePicker("Fecha");
         fecha .setPrefixComponent(VaadinIcon.DATE_INPUT.create());
         fecha.setHelperText("Horario de 8:00AM a 4:00PM");
+        fecha.setLabel("Fecha y hora de la cita");
+        /*fecha.setStep(Duration.ofMinutes(30));
+        fecha.setHelperText("Elija en rango de 7 dias de 8AM/6PM");
+        fecha.setAutoOpen(true);
+        fecha.setMin(LocalDateTime.now());
+        fecha.setMax(LocalDateTime.now().plusDays(7));
+        fecha.setValue(LocalDateTime.now().plusDays(0));
+        fecha.addValueChangeListener(event -> {
+            LocalDateTime value = event.getValue();
+            String errorMessage = null;
+            if (value != null) {
+                if (value.compareTo(fecha.getMin()) < 8) {
+                    errorMessage = "Demaciado Temprano, Elija Otra Fecha y hora";
+                } else if (value.compareTo(fecha.getMax()) > 16) {
+                    errorMessage = "Demaciado Tarde, Elija Otra Fecha y hora";
+                }
+            }
+            fecha.setErrorMessage(errorMessage);
+        });
+        add(fecha);*/
+       
         identidad = new TextField("Identidad");
         identidad.setPlaceholder("Busqueda Paciente");
         identidad.setPrefixComponent(VaadinIcon.BACKSPACE.create());
@@ -235,6 +267,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 
     private void populateForm(Citas value) {
         if(value == null){
+        	
             this.idcita.setValue("");
         	this.fecha.setValue("");
         	this.identidad.setValue("");
@@ -244,6 +277,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         	this.detalle.setValue("");
         	} 
         else {
+        	//DateTimePicker fechastr = ;
         	this.idcita.setValue(value.getIdcita());
         	this.fecha.setValue(value.getFecha());
         	this.identidad.setValue(value.getIdentidad());
