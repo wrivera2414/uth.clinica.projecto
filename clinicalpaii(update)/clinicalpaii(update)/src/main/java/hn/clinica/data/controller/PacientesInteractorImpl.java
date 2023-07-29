@@ -3,6 +3,7 @@ package hn.clinica.data.controller;
 import java.io.IOException;
 
 import hn.clinica.data.entity.CLINICARepositoryImpl;
+import hn.clinica.data.entity.Pacientes;
 import hn.clinica.data.entity.ResponsePacientes;
 import hn.clinica.views.pacientes.PacientesViewModel;
 
@@ -31,5 +32,18 @@ public class PacientesInteractorImpl implements PacientesInteractor {
 			e.printStackTrace();
 		} 
 	}
+
+
+	@Override
+	public void crearPacientes(Pacientes nuevo) {
+		try {
+			boolean respuesta = this.modelo.createPaciente(nuevo);
+			this.vista.mostrarMensajeCreacion(respuesta);
+			
+		} catch (IOException e){
+			e.printStackTrace();
+		} 		
+	}
+
 
 }

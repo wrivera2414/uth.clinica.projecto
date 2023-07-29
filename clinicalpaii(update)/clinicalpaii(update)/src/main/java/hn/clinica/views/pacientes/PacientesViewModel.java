@@ -7,6 +7,5 @@ import hn.clinica.data.entity.Pacientes;
 public interface PacientesViewModel {
 	
 	void refrescarGridPacientes(List<Pacientes> pacientes);
-	
-
+	void mostrarMensajeCreacion(boolean Exito);
 }

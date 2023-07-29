@@ -5,48 +5,23 @@ public class Pacientes {
     private String nombre;
     private String identidad;
     private String telefono;
-    private Integer edad;
+    private String edad;
     private String sangre;
-    private Integer peso;
-    private Integer altura;
-
-    public String getNombre() {
-        return nombre;
-    }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-    public String getIdentidad() {
-        return identidad;
-    }
-    public void setIdentidad(String identidad) {
-        this.identidad = identidad;
-    }
-  
-    public Integer getEdad() {
-        return edad;
-    }
-    public void setEdad(Integer edad) {
-        this.edad = edad;
-    }
-    public String getSangre() {
-        return sangre;
-    }
-    public void setSangre(String sangre) {
-        this.sangre = sangre;
-    }
-   
-	public Integer getAltura() {
-		return altura;
+    private String peso;
+    private String altura;
+    
+    
+	public String getNombre() {
+		return nombre;
 	}
-	public void setAltura(Integer altura) {
-		this.altura = altura;
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
-	public Integer getPeso() {
-		return peso;
+	public String getIdentidad() {
+		return identidad;
 	}
-	public void setPeso(Integer peso) {
-		this.peso = peso;
+	public void setIdentidad(String identidad) {
+		this.identidad = identidad;
 	}
 	public String getTelefono() {
 		return telefono;
@@ -54,7 +29,32 @@ public class Pacientes {
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
+	public String getEdad() {
+		return edad;
+	}
+	public void setEdad(String edad) {
+		this.edad = edad;
+	}
+	public String getSangre() {
+		return sangre;
+	}
+	public void setSangre(String sangre) {
+		this.sangre = sangre;
+	}
+	public String getPeso() {
+		return peso;
+	}
+	public void setPeso(String peso) {
+		this.peso = peso;
+	}
+	public String getAltura() {
+		return altura;
+	}
+	public void setAltura(String altura) {
+		this.altura = altura;
+	}
+
+   
 	
-	
-	
+
 }

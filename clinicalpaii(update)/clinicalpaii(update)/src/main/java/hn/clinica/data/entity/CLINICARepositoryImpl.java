@@ -1,8 +1,8 @@
 package hn.clinica.data.entity;
 
 import java.io.IOException;
-
 import hn.clinica.data.service.RepositoryClient;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -40,6 +40,9 @@ public class CLINICARepositoryImpl {
 		
 	}
 	
+	
+	
+	//METODO PARA CONSULTAR PACIENTES DE BASE DE DATOS EN VIEW PACIENTES
 	public ResponsePacientes getPacientes() throws IOException{
 		
 		Call <ResponsePacientes> call = client.getDataService().obtenerPacientes();
@@ -53,6 +56,27 @@ public class CLINICARepositoryImpl {
 			
 		}
 	}
+	
+	
+	
+	
+	//METODO PARA CREACION DE PACIENTE VIEW PACIENTES
+	public boolean createPaciente(Pacientes nuevo) throws IOException{
+		
+		
+		Call <ResponseBody> call = client.getDataService().crearPaciente(nuevo);
+		Response<ResponseBody> response = call.execute(); // AQUI ES DONDE SE CONSULTA A LA URL DE LA BASE DE DATOS.
+		
+		
+			return response.isSuccessful();
+
+			
+	}
+
+	
+	
+	
+	//METODO PARA CONSULTAR CITA DE BASE DE DATOS EN VIEW CITAS
 		public ResponseCitas getCita() throws IOException{
 			
 			Call <ResponseCitas> call = client.getDataService().obtenerCitas();
@@ -67,10 +91,11 @@ public class CLINICARepositoryImpl {
 			}
 	}
 		
-		public ResponseConsulta getConsulta() throws IOException{
+		//METODO PARA CONSULTAR MEDICAMENTOS DE BASE DE DATOS EN VIEW CITAS
+		public ResponseMedicamento getMedicamento() throws IOException{
 			
-			Call<ResponseConsulta> call = client.getDataService().obtenerConsulta();
-			Response<ResponseConsulta> response = call.execute(); // AQUI ES DONDE SE CONSULTA A LA URL DE LA BASE DE DATOS.
+			Call <ResponseMedicamento> call = client.getDataService().obtenerMedicamentos();
+			Response<ResponseMedicamento> response = call.execute(); // AQUI ES DONDE SE CONSULTA A LA URL DE LA BASE DE DATOS.
 			if(response.isSuccessful()) {
 				return response.body();
 			}
@@ -79,6 +104,6 @@ public class CLINICARepositoryImpl {
 				return null;
 				
 			}
-
-}
+	}
+		
 }

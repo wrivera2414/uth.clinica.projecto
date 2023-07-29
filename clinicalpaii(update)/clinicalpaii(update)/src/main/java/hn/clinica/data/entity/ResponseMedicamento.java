@@ -2,19 +2,18 @@ package hn.clinica.data.entity;
 
 import java.util.List;
 
-public class ResponseConsulta {
-	
-	private List<Consulta> items;
+public class ResponseMedicamento {
+
+	private List<Medicamentos> items;
 	private boolean hasMore;
 	private int limit;
 	private int offset;
 	private int count;
 	
-	
-	public List<Consulta> getItems() {
+	public List<Medicamentos> getItems() {
 		return items;
 	}
-	public void setItems(List<Consulta> items) {
+	public void setItems(List<Medicamentos> items) {
 		this.items = items;
 	}
 	public boolean isHasMore() {
@@ -42,7 +41,4 @@ public class ResponseConsulta {
 		this.count = count;
 	}
 	
-	
-	
-
 }

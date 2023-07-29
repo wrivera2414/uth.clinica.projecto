@@ -1,4 +1,4 @@
-package hn.clinica.views.pacientes;
+ package hn.clinica.views.pacientes;
 
 import com.vaadin.flow.component.UI;
 
@@ -45,9 +45,10 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     private TextField identidad;
     private TextField telefono;
     private TextField edad;
-    private ComboBox<Pacientes> sangre;
     private TextField peso;
     private TextField altura;
+    private TextField sangre;
+
     private List<Pacientes> pacientes;
     
 
@@ -75,7 +76,8 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         grid.addColumn("edad").setAutoWidth(true);
         grid.addColumn("sangre").setAutoWidth(true);
         grid.addColumn("peso").setAutoWidth(true);
-        grid.addColumn("altura").setAutoWidth(true);
+        grid.addColumn("altura").setAutoWidth(true);  
+        
         
         
         /*grid.setItems(query -> pacientesService.list(
@@ -105,20 +107,31 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 
         save.addClickListener(e -> {
             try {
-                if (this.paciente == null) {
-                    this.paciente = new Pacientes();
+                if (this.paciente == null) {      
+                   this.paciente = new Pacientes();
+                   this.paciente.setIdentidad(this.identidad.getValue());
+                   this.paciente.setNombre(this.nombre.getValue());
+                   this.paciente.setTelefono(this.telefono.getValue());
+           	       this.paciente.setSangre(this.sangre.getValue());	 
+                   this.paciente.setEdad(this.edad.getValue());
+                   this.paciente.setPeso(this.peso.getValue());
+                   this.paciente.setAltura(this.altura.getValue());
+                   this.controlador.crearPacientes(paciente);
+                } else 
+                {
+                	//this.controlador.modificarPacientes(paciente);
                 }
                 clearForm();
                 refreshGrid();
-                Notification.show("Data updated");
                 UI.getCurrent().navigate(PacientesView.class);
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
-                        "Error updating the data. Somebody else has updated the record while you were making changes.");
+                        "Eerror al almacenar informacion por favor revise su conexion o intente nuevamente");
                 n.setPosition(Position.MIDDLE);
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
         }});
     }
+    
 
     @Override
     
@@ -136,7 +149,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         	}
         		if(!encontrado) 
         		{
-        			 Notification.show(String.format("El empleado con identidad= %s", pacientesId.get() + "No fue encontrado"),
+        		 Notification.show(String.format("El empleado con identidad= %s", pacientesId.get() + "No fue encontrado"),
                              3000, Notification.Position.BOTTOM_START);
                      refreshGrid();
                      event.forwardTo(PacientesView.class); 
@@ -164,14 +177,8 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         telefono.setPrefixComponent(new Span("+504"));
         edad = new TextField("Edad");
         edad.setSuffixComponent(new Span("Años"));
-       
-        
-        sangre = new ComboBox<>("Sangre");
-        Collection<Pacientes> listadoTipoSangre = generarTipoSangre();
-        sangre.setItems(listadoTipoSangre);
-        sangre.setItemLabelGenerator(Pacientes::getSangre);
-  
-        
+        sangre = new TextField("Sangre");
+
         peso = new TextField("Peso");
         peso.setSuffixComponent(new Span("Lbs"));
 
@@ -181,7 +188,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         
         
         //Agregar Componentes al Layout
-        formLayout.add(nombre, identidad,sangre, edad, peso, altura);
+        formLayout.add(nombre, identidad,telefono,sangre, edad, peso, altura);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -189,27 +196,6 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         splitLayout.addToSecondary(editorLayoutDiv);
     }
 
-
-	private Collection<Pacientes> generarTipoSangre() {
-		
-		
-		List<Pacientes> listado = new ArrayList<>();
-		Pacientes aPositivo = new Pacientes();
-		aPositivo.setSangre("A-POSITIVO");
-		
-		Pacientes oPositivo = new Pacientes();
-		oPositivo.setSangre("O-POSITIVO");
-		
-		Pacientes oNegativo = new Pacientes();
-		oNegativo.setSangre("O-NEGATIVO");
-	
-		
-		listado.add(aPositivo);
-		listado.add(oPositivo);
-		listado.add(oNegativo);
-		
-		return listado;
-	}
 
 	private void createButtonLayout(Div editorLayoutDiv) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
@@ -228,6 +214,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     }
 
     private void refreshGrid() {
+    	this.controlador.consultarPacientes();
         grid.select(null);
         grid.getDataProvider().refreshAll();
     }
@@ -237,13 +224,14 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     }
 
     private void populateForm(Pacientes value) {
+    	    	
     	if(value == null) 
-    	{
+    	{	
     		this.nombre.setValue("");	
 		    this.identidad.setValue("");	
 		    this.telefono.setValue("");	
 		    this.edad.setValue("");	
-		    this.sangre.setValue(null);	
+		    this.sangre.setValue("");	
 		    this.peso.setValue("");	
 		    this.altura.setValue("");
     	}
@@ -252,12 +240,10 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     		this.nombre.setValue(value.getNombre());	
     	    this.identidad.setValue(value.getIdentidad());	
     	    this.telefono.setValue(value.getTelefono());	
-    	    this.edad.setValue(value.getEdad().toString());	 
-    	    Pacientes seleccionSangre = new Pacientes();
-    	    seleccionSangre.setSangre(value.getSangre());
-    	    this.sangre.setValue(seleccionSangre);
-    	    this.peso.setValue(value.getPeso().toString());	
-    	    this.altura.setValue(value.getAltura().toString());	
+    	    this.edad.setValue(value.getEdad());
+    	    this.sangre.setValue(value.getSangre());	 
+    	    this.peso.setValue(value.getPeso());	
+    	    this.altura.setValue(value.getAltura());	
     	
     	} 	
     	
@@ -269,6 +255,21 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 		Collection<Pacientes> items = pacientes;
 		grid.setItems(items);
 		this.pacientes = pacientes;
+		
+	}
+
+
+	@Override
+	public void mostrarMensajeCreacion(boolean Exito) {
+		
+        String MensajeExito = "Registro Guardado!";
+		if(!Exito) 
+		{
+			MensajeExito = "Empleado No Pudo Ser Creado";		
+			}
+	
+        Notification.show(MensajeExito);
+
 		
 	}
 }

@@ -1,51 +1,50 @@
+//----->   MedicamentosView.java
 package hn.clinica.views.medicamentos;
-
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
-import com.vaadin.flow.component.combobox.MultiSelectComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import hn.clinica.data.entity.SamplePerson;
+import hn.clinica.data.controller.MedicamentosInteractor;
+import hn.clinica.data.controller.MedicamentosInteractorImpl;
+import hn.clinica.data.entity.Medicamentos;
 import hn.clinica.views.MainLayout;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import org.springframework.data.jpa.domain.Specification;
 
 @PageTitle("Medicamentos")
 @Route(value = "medicamentos", layout = MainLayout.class)
 @Uses(Icon.class)
-public class MedicamentosView extends Div {
+public class MedicamentosView extends Div implements MedicamentosViewModel{
 
-    private Grid<SamplePerson> grid;
+    private static Grid<Medicamentos> grid;
 
     private Filters filters;
-
+    private List<Medicamentos> medicamentos;
+    private MedicamentosInteractor controlador;
+   
+    
+    
+    //CONSTRUCTOR	
     public MedicamentosView() {
+ 
         setSizeFull();
         addClassNames("medicamentos-view");
-
-        filters = new Filters(() -> refreshGrid());
+        this.controlador = new MedicamentosInteractorImpl(this);
+        filters = new Filters(() -> refrescarGridMedicamentos(medicamentos));
         VerticalLayout layout = new VerticalLayout(createMobileFilters(), filters, createGrid());
         layout.setSizeFull();
         layout.setPadding(false);
@@ -77,61 +76,78 @@ public class MedicamentosView extends Div {
         return mobileFilters;
     }
 
-    public static class Filters extends Div implements Specification<SamplePerson> {
+    public static class Filters extends Div implements BeforeEnterObserver,MedicamentosViewModel {
 
-        private final TextField name = new TextField("Name");
-        private final TextField phone = new TextField("Phone");
-        private final DatePicker startDate = new DatePicker("Date of Birth");
-        private final DatePicker endDate = new DatePicker();
-        private final MultiSelectComboBox<String> occupations = new MultiSelectComboBox<>("Occupation");
-        private final CheckboxGroup<String> roles = new CheckboxGroup<>("Role");
-
+        private final TextField codigo = new TextField("Codigo");
+        private final TextField nombre = new TextField("Nombre");
+        private final TextField fabricante = new TextField("Fabricante");
+        private final TextField principioa = new TextField("Principio");
+        private final TextField fechav= new TextField("Fecha vencimiento");
+        private final TextField stock= new TextField("Stock");
+        private List<Medicamentos> medicamento;
+        
         public Filters(Runnable onSearch) {
 
             setWidthFull();
             addClassName("filter-layout");
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
-            name.setPlaceholder("First or last name");
-
-            occupations.setItems("Insurance Clerk", "Mortarman", "Beer Coil Cleaner", "Scale Attendant");
-
-            roles.setItems("Worker", "Supervisor", "Manager", "External");
-            roles.addClassName("double-width");
-
+            
+            codigo.setPrefixComponent(VaadinIcon.QRCODE.create());
+            nombre.setPrefixComponent(VaadinIcon.USER.create());
+            fabricante.setPrefixComponent(VaadinIcon.PHONE_LANDLINE.create());
+            fechav.setPrefixComponent(VaadinIcon.TIMER.create());
+            principioa.setPrefixComponent(VaadinIcon.COMPILE.create());
+            stock.setPrefixComponent(VaadinIcon.STOCK.create());
+            
             // Action buttons
-            Button resetBtn = new Button("Reset");
+            Button resetBtn = new Button("Cancelar");
             resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             resetBtn.addClickListener(e -> {
-                name.clear();
-                phone.clear();
-                startDate.clear();
-                endDate.clear();
-                occupations.clear();
-                roles.clear();
-                onSearch.run();
+                codigo.clear();
+                nombre.clear();
+                fabricante.clear();
+                principioa.clear();
+                fechav.clear();
+                stock.clear();
+                
             });
-            Button searchBtn = new Button("Search");
-            searchBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            searchBtn.addClickListener(e -> onSearch.run());
+            Button searchBtn = new Button("Buscar");
+            searchBtn.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+            searchBtn.addClickListener(e -> {
+            	boolean encontrar = false;
+            	if (!encontrar)
+            	{
+            		BuscarMedicamento();
+            		
+            	} else {
+					
+            		
+            		
+            	}});
 
             Div actions = new Div(resetBtn, searchBtn);
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
 
-            add(name, phone, createDateRangeFilter(), occupations, roles, actions);
+            add(codigo, nombre, fabricante, principioa, fechav, stock, actions);
         }
 
-        private Component createDateRangeFilter() {
-            startDate.setPlaceholder("From");
+       private void BuscarMedicamento() {
+			// Busca de Medicamentos
 
-            endDate.setPlaceholder("To");
+		}
+
+	/* private Component createDateRangeFilter() {
+            telefono.setPlaceholder("From");
+
+            principioa.setPlaceholder("To");
 
             // For screen readers
-            setAriaLabel(startDate, "From date");
-            setAriaLabel(endDate, "To date");
+            setAriaLabel(telefono, "From date");
+            setAriaLabel(principioa, "To date");
 
-            FlexLayout dateRangeComponent = new FlexLayout(startDate, new Text(" – "), endDate);
+            FlexLayout dateRangeComponent = new FlexLayout(telefono, new Text(" – "), principioa);
             dateRangeComponent.setAlignItems(FlexComponent.Alignment.BASELINE);
             dateRangeComponent.addClassName(LumoUtility.Gap.XSMALL);
 
@@ -142,90 +158,94 @@ public class MedicamentosView extends Div {
             datePicker.getElement().executeJs("const input = this.inputElement;" //
                     + "input.setAttribute('aria-label', $0);" //
                     + "input.removeAttribute('aria-labelledby');", label);
-        }
+        }*/
 
-        @Override
+      /*  @Override
         public Predicate toPredicate(Root<SamplePerson> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (!name.isEmpty()) {
-                String lowerCaseFilter = name.getValue().toLowerCase();
+                
+            
+            if (!codigo.isEmpty()) {
+                String lowerCaseFilter = codigo.getValue().toLowerCase();
                 Predicate firstNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")),
                         lowerCaseFilter + "%");
                 Predicate lastNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")),
                         lowerCaseFilter + "%");
                 predicates.add(criteriaBuilder.or(firstNameMatch, lastNameMatch));
             }
-            if (!phone.isEmpty()) {
+            if (!nombre.isEmpty()) {
                 String databaseColumn = "phone";
                 String ignore = "- ()";
 
-                String lowerCaseFilter = ignoreCharacters(ignore, phone.getValue().toLowerCase());
+                String lowerCaseFilter = ignoreCharacters(ignore, nombre.getValue().toLowerCase());
                 Predicate phoneMatch = criteriaBuilder.like(
                         ignoreCharacters(ignore, criteriaBuilder, criteriaBuilder.lower(root.get(databaseColumn))),
                         "%" + lowerCaseFilter + "%");
                 predicates.add(phoneMatch);
 
             }
-            if (startDate.getValue() != null) {
+            if (telefono.getValue() != null) {
                 String databaseColumn = "dateOfBirth";
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(databaseColumn),
-                        criteriaBuilder.literal(startDate.getValue())));
+                        criteriaBuilder.literal(telefono.getValue())));
             }
-            if (endDate.getValue() != null) {
+            if (principioa.getValue() != null) {
                 String databaseColumn = "dateOfBirth";
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.literal(endDate.getValue()),
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.literal(principioa.getValue()),
                         root.get(databaseColumn)));
             }
-            if (!occupations.isEmpty()) {
+            if (!fechav.isEmpty()) {
                 String databaseColumn = "occupation";
                 List<Predicate> occupationPredicates = new ArrayList<>();
-                for (String occupation : occupations.getValue()) {
+                for (String occupation : fechav.getValue()) {
                     occupationPredicates
                             .add(criteriaBuilder.equal(criteriaBuilder.literal(occupation), root.get(databaseColumn)));
                 }
                 predicates.add(criteriaBuilder.or(occupationPredicates.toArray(Predicate[]::new)));
             }
-            if (!roles.isEmpty()) {
+            if (!stock.isEmpty()) {
                 String databaseColumn = "role";
                 List<Predicate> rolePredicates = new ArrayList<>();
-                for (String role : roles.getValue()) {
+                for (String stock  : stock.getValue()) {
                     rolePredicates.add(criteriaBuilder.equal(criteriaBuilder.literal(role), root.get(databaseColumn)));
                 }
                 predicates.add(criteriaBuilder.or(rolePredicates.toArray(Predicate[]::new)));
             }
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
-        }
+        }*/
 
-        private String ignoreCharacters(String characters, String in) {
-            String result = in;
-            for (int i = 0; i < characters.length(); i++) {
-                result = result.replace("" + characters.charAt(i), "");
-            }
-            return result;
-        }
+	@Override
+	public void beforeEnter(BeforeEnterEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
 
-        private Expression<String> ignoreCharacters(String characters, CriteriaBuilder criteriaBuilder,
-                Expression<String> inExpression) {
-            Expression<String> expression = inExpression;
-            for (int i = 0; i < characters.length(); i++) {
-                expression = criteriaBuilder.function("replace", String.class, expression,
-                        criteriaBuilder.literal(characters.charAt(i)), criteriaBuilder.literal(""));
-            }
-            return expression;
-        }
+	@Override
+	public void refrescarGridMedicamentos(List<Medicamentos> medicamento) {
+		// TODO Auto-generated method stub
+		//Este Metodo refresca el Grid
+		
+				Collection<Medicamentos> items = medicamento;
+				grid.setItems(items);
+				this.medicamento = medicamento;
+	}
 
     }
 
     private Component createGrid() {
-        grid = new Grid<>(SamplePerson.class, false);
-        grid.addColumn("firstName").setAutoWidth(true);
-        grid.addColumn("lastName").setAutoWidth(true);
-        grid.addColumn("email").setAutoWidth(true);
-        grid.addColumn("phone").setAutoWidth(true);
-        grid.addColumn("dateOfBirth").setAutoWidth(true);
-        grid.addColumn("occupation").setAutoWidth(true);
-        grid.addColumn("role").setAutoWidth(true);
+
+        grid = new Grid<>(Medicamentos.class, false);
+        grid.addColumn("codigo").setAutoWidth(true).setHeader("Codigo");
+        grid.addColumn("nombre").setAutoWidth(true).setHeader("Nombre");
+        grid.addColumn("fabricante").setAutoWidth(true).setHeader("Fabricante");
+        grid.addColumn("principioa").setAutoWidth(true).setHeader("Principio Activo");
+        grid.addColumn("fechav").setAutoWidth(true).setHeader("Fecha vencimiento");
+        grid.addColumn("stock").setAutoWidth(true).setHeader("Stok");
+        
+        this.controlador.consultarMedicamentos();
+
+     //   grid.addColumn("role").setAutoWidth(true);
 
         
         /*grid.setItems(query -> samplePersonService.list(
@@ -238,9 +258,17 @@ public class MedicamentosView extends Div {
 
         return grid;
     }
+    
+    
 
-    private void refreshGrid() {
-        grid.getDataProvider().refreshAll();
-    }
+	@Override
+	public void refrescarGridMedicamentos(List<Medicamentos> medicamento) {
+		Collection<Medicamentos> items = medicamento;
+		grid.setItems(items);
+		this.medicamentos = medicamento;
+	}
+    
+    
+
 
 }
