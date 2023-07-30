@@ -119,6 +119,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 
         save.addClickListener(e -> {
             try {
+            	String MensajeExito = "Registro Guardado!";
                 if (this.citas == null) {
                     //CEANDO REGISTRO 
                 	this.citas = new Citas();
@@ -141,6 +142,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 n.setPosition(Position.MIDDLE);
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
             } 
+            
         });
         
     }
@@ -154,6 +156,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         	   if (e.getIdcita().equals(citasId.get()) ) {
         		   populateForm(e);
         		   encontrado = true ;
+        		   break;
         	   }
            }
             if (!encontrado) {
@@ -254,7 +257,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     }
 
     private void refreshGrid() {
-        grid.select(null);
+    	this.controlador.consultarCitas();
+    	grid.select(null);
         grid.getDataProvider().refreshAll();
     }
 
