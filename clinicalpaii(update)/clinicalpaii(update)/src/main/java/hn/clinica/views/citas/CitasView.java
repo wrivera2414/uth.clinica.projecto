@@ -130,6 +130,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 	this.citas.setDireccion(this.direccion.getValue());
                 	this.citas.setDetalle(this.detalle.getValue());
                 	this.controlador.crearNuevaCitas(citas);  
+                    this.controlador.consultarCitas();
+
                 }else {
                     //MODIFICANDO REGISTRO
                 }
@@ -140,6 +142,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 Notification n = Notification.show("Error al actualizar los datos. revisa tu conexion ");
                 n.setPosition(Position.MIDDLE);
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                
             } 
         });
         
@@ -178,7 +181,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        idcita = new TextField("Numero de Cita");
+        idcita = new TextField("NumerodeCita");
        // idcita.setPrefixComponent(VaadinIcon.USER_CARD.create());
         fecha = new TextField("Fecha");        
         //fecha = new DateTimePicker("Fecha");
@@ -228,7 +231,6 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                     .setHelperText(e.getValue().length() + "/" + (140));
         });
         //detalle.setValue("Detalle de la cita");
-        add(detalle);
         formLayout.add(idcita, fecha, identidad, paciente, direccion, telefono, detalle);
 
         editorDiv.add(formLayout);
