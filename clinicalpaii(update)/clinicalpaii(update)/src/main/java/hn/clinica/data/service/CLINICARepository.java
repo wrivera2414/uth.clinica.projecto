@@ -29,7 +29,6 @@ public interface CLINICARepository {
 	    "Accept-Charset: utf-8",
 	    "User-Agent: Retrofit-Sample-App"
 	})
-	//https://apex.oracle.com/pls/apex/wencellr_pav2_98_2/clinica/pacientes/
 	
 	@POST("/pls/apex/wencellr_pav2_98_2/clinica/pacientes/")
 	Call<ResponseBody> crearPaciente(@Body Pacientes nuevo);
