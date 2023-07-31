@@ -17,7 +17,7 @@ public class CitasInteractorImpl implements CitasInteractor {
 	public CitasInteractorImpl(CitasViewModel vista) 
 	{
 		super();
-		this.modelo = CLINICARepositoryImpl.getInstance("https://apex.oracle.com/", 60000L);
+		this.modelo = CLINICARepositoryImpl.getInstance("https://apex.oracle.com/", 89000L);
 		this.vista = vista;
 	}
 
@@ -44,4 +44,26 @@ public class CitasInteractorImpl implements CitasInteractor {
 		}
 	}
 
+	@Override
+	public void actualizarCitas(Citas actualizar) {
+		try {
+			boolean respuesta = this.modelo.UpdateCita(actualizar);
+			this.vista.mostrarMensajeActualizacion(respuesta);;
+			
+		} catch (IOException e){
+			e.printStackTrace();	
+	}
+}
+
+	@Override
+	public void eliminarCitas(String idcita) {
+		try {
+			boolean respuesta = this.modelo.DeleteCita(idcita);
+			this.vista.mostrarMensajeEliminacion(respuesta);
+			
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+		
+	}
 }

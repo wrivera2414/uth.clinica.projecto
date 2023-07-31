@@ -8,6 +8,8 @@ public interface CitasViewModel {
 	
 	void refrescarGridCitas(List<Citas> cita);
 	void mostrarMensajeCreacion(boolean exito);
+	void mostrarMensajeActualizacion(boolean exito);
+	void mostrarMensajeEliminacion(boolean exito);
 	
 
 }

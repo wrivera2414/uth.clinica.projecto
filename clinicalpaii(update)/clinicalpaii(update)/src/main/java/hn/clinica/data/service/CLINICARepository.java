@@ -8,9 +8,12 @@ import hn.clinica.data.entity.ResponsePacientes;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Query;
 
 public interface CLINICARepository {
 
@@ -34,26 +37,40 @@ public interface CLINICARepository {
 	Call<ResponseBody> crearPaciente(@Body Pacientes nuevo);
 
 	
-	// METODO CREAR CITA
-	@Headers({
-	    "Content-Type: application/json",
-	    "Accept-Charset: utf-8",
-	    "User-Agent: Retrofit-Sample-App"
-	})
-	
-	@GET("/pls/apex/wencellr_pav2_98_2/clinica/citas/")
-	Call<ResponseCitas> obtenerCitas();
-	
 	// METODO CONSULTA CITA
 	@Headers({
 	    "Content-Type: application/json",
 	    "Accept-Charset: utf-8",
 	    "User-Agent: Retrofit-Sample-App"
 	})
+	@GET("/pls/apex/wencellr_pav2_98_2/clinica/citas/")
+	Call<ResponseCitas> obtenerCitas();
 	
+	// METODO CREAR CITA
+	@Headers({
+	    "Content-Type: application/json",
+	    "Accept-Charset: utf-8",
+	    "User-Agent: Retrofit-Sample-App"
+	})
 	@POST("/pls/apex/wencellr_pav2_98_2/clinica/citas/")
 	Call<ResponseBody> crearCitas(@Body Citas nuevo );
 	
+	// METODO MODIFIAR CITA
+	@Headers({
+	    "Content-Type: application/json",
+	    "Accept-Charset: utf-8",
+	    "User-Agent: Retrofit-Sample-App"
+	})
+	@PUT("/pls/apex/wencellr_pav2_98_2/clinica/citas/")
+	Call<ResponseBody> actualizarCitas(@Body Citas actualizar );
+	
+	// METODO ELMINAR CITA
+	@Headers({
+		    "Accept-Charset: utf-8",
+		    "User-Agent: Retrofit-Sample-App"
+		})
+	 @DELETE("/pls/apex/wencellr_pav2_98_2/clinica/citas/")
+	 Call<ResponseBody> eliminarCitas(@Query("id") String idcita);
 	
 	
 	@Headers({
