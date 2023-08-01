@@ -5,8 +5,7 @@
 @import url('./views/consulta-view.css');
 @import url('@fontsource/bitter/index.css');    
 
- 
-html {
+ html {
   --lumo-line-height-m: 1.8;
   --lumo-line-height-s: 1.5;
   --lumo-line-height-xs: 1.3;
@@ -50,9 +49,9 @@ html {
   --lumo-shade-70pct: rgba(26, 26, 26, 0.7);
   --lumo-shade-80pct: rgba(26, 26, 26, 0.8);
   --lumo-shade-90pct: rgba(26, 26, 26, 0.9);
-  --lumo-primary-text-color: rgb(235, 89, 5);
-  --lumo-primary-color-50pct: rgba(235, 89, 5, 0.5);
-  --lumo-primary-color-10pct: rgba(235, 89, 5, 0.1);
+  --lumo-primary-text-color: rgb(5, 93, 235);
+  --lumo-primary-color-50pct: rgba(5, 93, 235, 0.5);
+  --lumo-primary-color-10pct: rgba(5, 93, 235, 0.1);
   --lumo-error-text-color: rgb(231, 24, 24);
   --lumo-error-color-50pct: rgba(231, 24, 24, 0.5);
   --lumo-error-color-10pct: rgba(231, 24, 24, 0.1);
@@ -60,12 +59,10 @@ html {
   --lumo-success-color-50pct: rgba(62, 229, 170, 0.5);
   --lumo-success-color-10pct: rgba(62, 229, 170, 0.1);
   --lumo-shade: hsl(0, 0%, 10%);
-  --lumo-primary-color: hsl(22, 96%, 47%);
+  --lumo-primary-color: hsl(217, 96%, 47%);
   --lumo-error-color: hsl(0, 81%, 50%);
   --lumo-success-color: hsl(159, 76%, 57%);
   --lumo-success-contrast-color: hsl(159, 29%, 10%);
   --lumo-header-text-color: hsl(91, 60%, 61%);
   --lumo-body-text-color: hsla(71, 79%, 85%, 0.9);
 }
-
-      
