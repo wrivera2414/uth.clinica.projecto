@@ -5,8 +5,6 @@
 @import url('./views/consulta-view.css');
 @import url('@fontsource/bitter/index.css');    
 
- <custom-style>
-  <style>
 
 html {
   --lumo-line-height-m: 1.8;
@@ -71,6 +69,4 @@ html {
   --lumo-base-color: hsl(192, 35%, 21%);
 }
 
-  </style>
-</custom-style>
  
