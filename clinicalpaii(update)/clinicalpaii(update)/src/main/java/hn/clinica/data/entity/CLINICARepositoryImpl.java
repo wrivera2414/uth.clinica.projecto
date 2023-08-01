@@ -93,6 +93,7 @@ public class CLINICARepositoryImpl {
 			Response<ResponseBody> response = call.execute(); // AQUI ES DONDE SE CONSULTA A LA URL DE LA BASE DE DATOS.
 				return response.isSuccessful();
 			}
+		
 		//METODO PARA MODIFICAR CITA DE BASE DE DATOS EN VIEW CITAS
 		public boolean UpdateCita(Citas actualizar) throws IOException{	
 			Call <ResponseBody> call = client.getDataService().actualizarCitas(actualizar);
@@ -106,7 +107,6 @@ public class CLINICARepositoryImpl {
 				return response.isSuccessful();
 			}
 
-		
 		//METODO PARA CONSULTAR MEDICAMENTOS DE BASE DE DATOS EN VIEW CITAS
 		public ResponseMedicamento getMedicamento() throws IOException{
 			

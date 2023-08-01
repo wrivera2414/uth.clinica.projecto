@@ -282,8 +282,9 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     private void createButtonLayout(Div editorLayoutDiv) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
-        save.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
-        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+       // save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        cancel.addThemeVariants(ButtonVariant.LUMO_SMALL);
         buttonLayout.add(save, cancel);
         editorLayoutDiv.add(buttonLayout);
     }
