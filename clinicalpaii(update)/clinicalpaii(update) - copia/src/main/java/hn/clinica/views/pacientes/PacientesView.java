@@ -1,5 +1,6 @@
  package hn.clinica.views.pacientes;
 
+import com.github.javaparser.ast.expr.ThisExpr;
 import com.vaadin.flow.component.UI;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -106,8 +107,12 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         });
 
         save.addClickListener(e -> {
+        	
             try {
-                if (this.paciente == null) {      
+                String MensajeExito = "Registro Guardado!";
+
+                if (this.paciente == null) {    
+               
                    this.paciente = new Pacientes();
                    this.paciente.setIdentidad(this.identidad.getValue());
                    this.paciente.setNombre(this.nombre.getValue());
@@ -117,12 +122,22 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
                    this.paciente.setPeso(this.peso.getValue());
                    this.paciente.setAltura(this.altura.getValue());
                    this.controlador.crearPacientes(paciente);
+                   
+                   
+                   
                 } else 
                 {
                 	//this.controlador.modificarPacientes(paciente);
+                	 Notification n = Notification.show(
+                             "Eerror al almacenar informacion por favor revise su conexion o intente nuevamente");
+                	 n.setPosition(Position.MIDDLE);
+                     n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                     
                 }
                 clearForm();
                 refreshGrid();
+                this.paciente = null;
+                
                 UI.getCurrent().navigate(PacientesView.class);
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
@@ -263,9 +278,11 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 	public void mostrarMensajeCreacion(boolean Exito) {
 		
         String MensajeExito = "Registro Guardado!";
+        
 		if(!Exito) 
 		{
-			MensajeExito = "Empleado No Pudo Ser Creado";		
+			MensajeExito = "Empleado No Pudo Ser Creado";
+			
 			}
 	
         Notification.show(MensajeExito);
@@ -273,3 +290,4 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 		
 	}
 }
+ 

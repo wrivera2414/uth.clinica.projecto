@@ -1,10 +1,6 @@
 package hn.clinica.data.entity;
 
-import jakarta.persistence.Entity;
-import java.time.LocalDateTime;
-
-@Entity
-public class Citas extends AbstractEntity {
+public class Citas {
 
     private String idcita;
     private String fecha;

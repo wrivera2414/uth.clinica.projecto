@@ -16,7 +16,7 @@
   "@vaadin/combo-box": "24.1.2",
   "@vaadin/common-frontend": "0.0.18",
   "@vaadin/component-base": "24.1.2",
-  "@vaadin/confirm-dialog": "24.1.2",
+  "@vaadin/confirm-dialog": "24.1.0",
   "@vaadin/context-menu": "24.1.2",
   "@vaadin/cookie-consent": "24.1.2",
   "@vaadin/crud": "24.1.2",
@@ -95,7 +95,7 @@
   "@vaadin/combo-box": "24.1.2",
   "@vaadin/common-frontend": "0.0.18",
   "@vaadin/component-base": "24.1.2",
-  "@vaadin/confirm-dialog": "24.1.2",
+  "@vaadin/confirm-dialog": "24.1.0",
   "@vaadin/context-menu": "24.1.2",
   "@vaadin/cookie-consent": "24.1.2",
   "@vaadin/crud": "24.1.2",
@@ -324,7 +324,7 @@
    "version": "24.1.2"
   }
  },
- "packageJsonHash": "875719ad0e48f4a5ede279243d80debd2ba4d7b28ee967403cb696412b199868",
+ "packageJsonHash": "6f4186e021621a687f28e2ee9fd023498393acc314eca35ce3ab897f1ebd0f64",
  "indexHtmlGenerated": [
   "  <script type=\"module\" crossorigin src=\"./VAADIN/build/indexhtml-4dfa7025.js\"></script>"
  ]

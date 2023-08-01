@@ -2,9 +2,11 @@ package hn.clinica.views.citas;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -35,7 +37,6 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 
     private final String CITAS_ID = "citasID";
     private final String CITAS_EDIT_ROUTE_TEMPLATE = "citas/%s/edit";
-
     private final Grid<Citas> grid = new Grid<>(Citas.class, false);
 
     private TextField idcita;
@@ -47,8 +48,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     private TextArea detalle;
     private List<Citas> cita;
 
-    private final Button cancel = new Button("Cancelar");
     private final Button save = new Button("Guardar");
+    private final Button cancel = new Button("Cancelar");
 
    // private final BeanValidationBinder<Citas> binder;
 
@@ -58,12 +59,13 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     //private final CitasService citasService;
 
     public CitasView() {
+    	addClassNames("citas-view");
     	cita = new ArrayList<>();
         this.controlador = new CitasInteractorImpl(this);
     //public CitasView(CitasService citasService) {
         //this.citasService = citasService;
-        addClassNames("citas-view");
-
+        
+        
         // Create UI
         SplitLayout splitLayout = new SplitLayout();
 
@@ -84,18 +86,45 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());*/
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-
+        GridContextMenu<Citas> menu = grid.addContextMenu();
+        menu.addItem("Eliminar", event -> {
+         	ConfirmDialog dialog = new ConfirmDialog();
+        	dialog.setHeader("Eliminar Cita de "+event.getItem().get().getPaciente());
+        	dialog.setText("Confirma que deseas eliminar la cita!");
+        	dialog.setCancelable(true);
+        	dialog.setCancelText("Cancelar");
+        	dialog.setCancelButtonTheme("cancel primary");
+        	dialog.addCancelListener(event2 -> {
+             refreshGrid();	
+        	});
+        	dialog.setConfirmText("Eliminar");
+        	dialog.setConfirmButtonTheme("error primary");
+        	dialog.addConfirmListener(event3 -> {
+        	this.controlador.eliminarCitas(event.getItem().get().getIdcita());
+        	});
+        	dialog.open();
+        	
+        });
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
-        	clearForm();
+        	//clearForm();
             if (event.getValue() != null) {
-                identidad.setReadOnly(true);
-
+               // identidad.setReadOnly(true);
+            	idcita.setReadOnly(true);
+            	identidad.setReadOnly(true);
+            	paciente.setReadOnly(true);
+            	telefono.setReadOnly(true);
+            	direccion.setReadOnly(true);
                 UI.getCurrent().navigate(String.format(CITAS_EDIT_ROUTE_TEMPLATE, event.getValue().getIdcita()));
             } else {
+            	idcita.setReadOnly(false);
+            	identidad.setReadOnly(false);
+            	paciente.setReadOnly(false);
+            	telefono.setReadOnly(false);
+            	direccion.setReadOnly(false);
                 clearForm();
                 UI.getCurrent().navigate(CitasView.class);
-                identidad.setReadOnly(false);
+                //identidad.setReadOnly(false);
 
             }
         });
@@ -110,32 +139,52 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         
         this.controlador.consultarCitas();
 
+        save.addClickListener(e -> {
+            try {
+            	
+            	String MensajeExito = "Registro Guardado!";
+                if (this.citas == null) {
+                    //CEANDO REGISTRO 
+                	this.citas = new Citas();
+                	this.citas.setIdcita(this.idcita.getValue());
+                	this.citas.setFecha(this.fecha.getValue());
+                	this.citas.setIdentidad(this.identidad.getValue());
+                	this.citas.setPaciente(this.paciente.getValue());
+                	this.citas.setTelefono(this.telefono.getValue());
+                	this.citas.setDireccion(this.direccion.getValue());
+                	this.citas.setDetalle(this.detalle.getValue());
+                	this.controlador.crearNuevaCitas(citas);  
+                    //this.controlador.consultarCitas();
+
+                }else {
+                    //MODIFICANDO REGISTRO
+                	this.citas.setIdcita(this.idcita.getValue());
+                	this.citas.setFecha(this.fecha.getValue());
+                	this.citas.setIdentidad(this.identidad.getValue());
+                	this.citas.setPaciente(this.paciente.getValue());
+                	this.citas.setTelefono(this.telefono.getValue());
+                	this.citas.setDireccion(this.direccion.getValue());
+                	this.citas.setDetalle(this.detalle.getValue());
+                	this.controlador.actualizarCitas(citas);
+                }
+                clearForm();
+                refreshGrid();
+                UI.getCurrent().navigate(CitasView.class);
+            } catch (ObjectOptimisticLockingFailureException exception) {
+                Notification n = Notification.show("Error al actualizar los datos. revisa tu conexion ");
+                n.setPosition(Position.MIDDLE);
+                n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                
+            } 
+            
+        });
+        
         cancel.addClickListener(e -> {
             clearForm();
             refreshGrid();
             identidad.setReadOnly(false);
 
         });
-
-        save.addClickListener(e -> {
-            try {
-                if (this.citas == null) {
-                    this.citas = new Citas();
-                }
-                
-                //citasService.update(this.citas);
-                clearForm();
-                refreshGrid();
-                Notification.show("Registro actualizado con exito");
-                UI.getCurrent().navigate(CitasView.class);
-            } catch (ObjectOptimisticLockingFailureException exception) {
-                Notification n = Notification.show(
-                        "Error al actualizar los datos. Alguien más ha actualizado el registro mientras estabas haciendo cambios.");
-                n.setPosition(Position.MIDDLE);
-                n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            } 
-        });
-        
     }
 
     @Override
@@ -147,6 +196,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         	   if (e.getIdcita().equals(citasId.get()) ) {
         		   populateForm(e);
         		   encontrado = true ;
+        		   break;
         	   }
            }
             if (!encontrado) {
@@ -202,13 +252,13 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         identidad.setPlaceholder("Busqueda Paciente");
         identidad.setPrefixComponent(VaadinIcon.BACKSPACE.create());
         paciente = new TextField("Paciente");
-        paciente.setReadOnly(true);
+       // paciente.setReadOnly(true);
         paciente.setPrefixComponent(VaadinIcon.USER.create());
         direccion = new TextField("Direccion");
-        direccion.setReadOnly(true);
+        //direccion.setReadOnly(true);
         direccion.setPrefixComponent(VaadinIcon.LOCATION_ARROW.create());
         telefono = new TextField("Telefono");
-        telefono.setReadOnly(true);
+        //telefono.setReadOnly(true);
         telefono.setPrefixComponent(VaadinIcon.PHONE_LANDLINE.create());
         detalle = new TextArea("Detalle");
         detalle.setPlaceholder("Ingrese el detalle de la cita");
@@ -221,7 +271,6 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                     .setHelperText(e.getValue().length() + "/" + (140));
         });
         //detalle.setValue("Detalle de la cita");
-        add(detalle);
         formLayout.add(idcita, fecha, identidad, paciente, direccion, telefono, detalle);
 
         editorDiv.add(formLayout);
@@ -233,8 +282,9 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     private void createButtonLayout(Div editorLayoutDiv) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
-        cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+       // save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        cancel.addThemeVariants(ButtonVariant.LUMO_SMALL);
         buttonLayout.add(save, cancel);
         editorLayoutDiv.add(buttonLayout);
     }
@@ -247,7 +297,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     }
 
     private void refreshGrid() {
-        grid.select(null);
+    	this.controlador.consultarCitas();
+    	grid.select(null);
         grid.getDataProvider().refreshAll();
     }
 
@@ -256,8 +307,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     }
 
     private void populateForm(Citas value) {
-        if(value == null){
-        	
+    	this.citas = value;
+        if(value == null){	
             this.idcita.setValue("");
         	this.fecha.setValue("");
         	this.identidad.setValue("");
@@ -288,4 +339,41 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 		
 	
 	}
+
+@Override
+public void mostrarMensajeCreacion(boolean exito) {
+      String mesajeMotrar = "Registro creado con exito";
+      if(!exito) {
+    	  mesajeMotrar = "Registro no pudo ser creado";
+      }
+      
+      Notification.show(mesajeMotrar);
+
+}
+
+@Override
+public void mostrarMensajeActualizacion(boolean exito) {
+	String mesajeMotrar = "Registro actualizado con exito";
+    if(!exito) {
+  	  mesajeMotrar = "Registro no pudo ser actualizado";
+    }
+    
+    Notification.show(mesajeMotrar);
+
+	
+}
+
+@Override
+public void mostrarMensajeEliminacion(boolean exito) {
+	String mesajeMotrar = "Registro eliminado con exito";
+	refreshGrid();
+    if(!exito) {
+  	  mesajeMotrar = "Registro no pudo ser eliminado";
+  	refreshGrid();
+    }
+    
+    Notification.show(mesajeMotrar);
+
+	
+}
 }
