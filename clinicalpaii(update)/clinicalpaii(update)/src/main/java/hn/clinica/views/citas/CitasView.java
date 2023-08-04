@@ -2,12 +2,12 @@ package hn.clinica.views.citas;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.charts.model.style.Theme;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -26,10 +26,19 @@ import java.util.Collection;
 import hn.clinica.data.controller.CitasInteractor;
 import hn.clinica.data.controller.CitasInteractorImpl;
 import hn.clinica.data.entity.Citas;
+import hn.clinica.data.entity.CitasDataReport;
+import hn.clinica.data.service.ReportGenerator;
 import hn.clinica.views.MainLayout;
+import com.vaadin.flow.component.progressbar.ProgressBar;
+
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.HashMap;
+
+
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Citas")
@@ -58,6 +67,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     private CitasInteractor controlador;
 
     //private final CitasService citasService;
+    
 
     public CitasView() {
     	addClassNames("citas-view");
@@ -106,6 +116,23 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         	dialog.open();
         	
         });
+            menu.addItem("Reporte", event -> {
+         	ConfirmDialog dialog = new ConfirmDialog();
+        	
+        	generarReporteCitas();
+        	ProgressBar progressBar = new ProgressBar();
+        	progressBar.setIndeterminate(false);
+            
+            getStyle().set("color", "var(--lumo-secondary-text-color)");
+        	Div progressBarLabel = new Div();
+            progressBarLabel.setText("Generando Reporte....");
+
+            add(progressBarLabel, progressBar);
+            });
+            
+    	    
+            
+        
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
         	//clearForm();
@@ -188,7 +215,32 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         });
     }
 
-    @Override
+
+	private void generarReporteCitas() {
+		ReportGenerator generador = new ReportGenerator(); 
+		Map<String, Object> parametros = new HashMap<>();
+		CitasDataReport datasource = new CitasDataReport();
+		datasource.setData(cita);
+		boolean generado = generador.generarReportePDF("reporte_citas2", parametros, datasource);
+	    if(generado) {
+	    	String ubicacion = generador.getUbicacion();
+	    	Anchor url = new Anchor(ubicacion, "Abrir reporte PDF");
+			url.setTarget("_blank"); 
+			Notification notificacion = new Notification(url);
+			notificacion.addThemeVariants(NotificationVariant.LUMO_ERROR);
+			notificacion.setDuration(20000);
+			notificacion.open();
+		}else {
+			Notification notificacion = new Notification("Ocurrió un problema al generar el reporte");
+			notificacion.addThemeVariants(NotificationVariant.LUMO_ERROR);
+			notificacion.setDuration(10000);
+			notificacion.open();
+	    }
+	
+	}
+
+
+	@Override
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<String> citasId = event.getRouteParameters().get(CITAS_ID);
       boolean encontrado = false; 

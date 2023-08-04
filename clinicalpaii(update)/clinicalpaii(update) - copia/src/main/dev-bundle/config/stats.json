@@ -40,7 +40,7 @@
   "@vaadin/list-box": "24.1.2",
   "@vaadin/lit-renderer": "24.1.2",
   "@vaadin/login": "24.1.2",
-  "@vaadin/map": "24.1.2",
+  "@vaadin/map": "24.1.4",
   "@vaadin/menu-bar": "24.1.2",
   "@vaadin/message-input": "24.1.2",
   "@vaadin/message-list": "24.1.2",
@@ -118,7 +118,7 @@
   "@vaadin/item": "24.1.2",
   "@vaadin/list-box": "24.1.2",
   "@vaadin/login": "24.1.2",
-  "@vaadin/map": "24.1.2",
+  "@vaadin/map": "24.1.4",
   "@vaadin/menu-bar": "24.1.2",
   "@vaadin/message-input": "24.1.2",
   "@vaadin/message-list": "24.1.2",
@@ -317,14 +317,14 @@
   },
   "@vaadin/map": {
    "name": "vaadin-map",
-   "version": "24.1.2"
+   "version": "24.1.4"
   },
   "@vaadin/rich-text-editor": {
    "name": "vaadin-rich-text-editor",
    "version": "24.1.2"
   }
  },
- "packageJsonHash": "6f4186e021621a687f28e2ee9fd023498393acc314eca35ce3ab897f1ebd0f64",
+ "packageJsonHash": "dd20529efe291f992db737e25774fad78b0927670e79986514fd2d032004bc58",
  "indexHtmlGenerated": [
   "  <script type=\"module\" crossorigin src=\"./VAADIN/build/indexhtml-4dfa7025.js\"></script>"
  ]

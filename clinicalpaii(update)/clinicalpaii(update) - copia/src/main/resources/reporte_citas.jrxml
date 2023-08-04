@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Simple_Blue" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1bf882c-014e-4c23-b227-60b3c4ba3bbc">
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="IDCITA" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="IDENTIDAD" class="java.lang.String"/>
+	<field name="PACIENTE" class="java.lang.String"/>
+	<field name="DIRECCION" class="java.lang.String"/>
+	<field name="TELEFONO" class="java.lang.String"/>
+	<field name="DETALLE" class="java.lang.String"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="29ad1166-ed28-4109-8869-73f1a5f22219"/>
+				<staticText>
+					<reportElement x="20" y="20" width="330" height="43" forecolor="#FFFFFF" uuid="3a84c6c5-e461-4cfa-ac62-1f27c51b1693"/>
+					<textElement>
+						<font size="34" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SISTEMA CLINICA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="20" y="64" width="150" height="20" forecolor="#FFFFFF" uuid="97f5dd45-e84b-4683-bc6d-09ec0a6b1d1f"/>
+					<textElement textAlignment="Right">
+						<font size="14" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Reporte Agendas Citas]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="62">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="6fa592e4-94f0-49ee-8e95-50bc475e5175"/>
+			</line>
+			<staticText>
+				<reportElement x="4" y="2" width="100" height="30" uuid="75509d07-0e4c-4fec-ab6a-68ad72122bf4"/>
+				<text><![CDATA[ID cita]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="42" y="2" width="100" height="30" uuid="94542ac8-024a-47d5-9835-c1c921ec6dc5"/>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="103" y="2" width="100" height="30" uuid="076ae123-f793-430a-9c41-7cb16931a428"/>
+				<text><![CDATA[Identidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="189" y="3" width="100" height="30" uuid="1b158b79-6a18-467a-971a-fe3aa0cba231"/>
+				<text><![CDATA[Paciente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="3" width="100" height="30" uuid="70eda948-48cf-4da7-a699-972087a2bd5d"/>
+				<text><![CDATA[Direccion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="388" y="3" width="100" height="30" uuid="22e1ecde-228a-4179-af02-6b2354911ee8"/>
+				<text><![CDATA[Telefono]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="449" y="3" width="86" height="30" uuid="ac494900-b82f-4be4-a3a7-8e427069d662"/>
+				<text><![CDATA[Detalle]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="4" y="25" width="26" height="30" uuid="df733b89-a2b8-43f9-8161-9af3dc0ccd2e"/>
+				<textFieldExpression><![CDATA[$F{IDCITA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="43" y="25" width="61" height="30" uuid="ab3eb6ee-38fe-4f89-b7e3-7c07fafe68cf"/>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="103" y="24" width="81" height="30" uuid="6fd5a2a9-10f0-448e-a63d-bb29026f7792"/>
+				<textFieldExpression><![CDATA[$F{IDENTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="189" y="23" width="81" height="30" uuid="89996108-dc68-4dda-b95e-1486507493fe"/>
+				<textFieldExpression><![CDATA[$F{PACIENTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="23" width="100" height="30" uuid="8425c061-008b-48fe-8914-d4b4d58a1508"/>
+				<textFieldExpression><![CDATA[$F{DIRECCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="390" y="23" width="59" height="30" uuid="75064334-b1dd-4014-b438-cb8e351108eb"/>
+				<textFieldExpression><![CDATA[$F{TELEFONO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="449" y="23" width="95" height="39" uuid="c633c368-dd4a-47ea-8e22-fa9eabe331a6"/>
+				<textFieldExpression><![CDATA[$F{DETALLE}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="20" width="575" height="1" uuid="8bfbcd29-bfa4-4c3b-bef1-d514b474a459"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20"/>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="1f3db868-b70b-46d9-91b5-10fd808d702e"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="f9b12cc6-a878-4600-9f00-a3a06d4092ab"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="4" width="100" height="13" uuid="b6ad5b27-5967-47c1-a044-ec148e5b7fe6"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>
