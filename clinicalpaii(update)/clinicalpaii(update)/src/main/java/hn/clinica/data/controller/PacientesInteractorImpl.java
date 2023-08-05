@@ -46,4 +46,16 @@ public class PacientesInteractorImpl implements PacientesInteractor {
 	}
 
 
+	@Override
+	public void modificarPacientes(Pacientes actualizar) {
+		try {
+			boolean respuesta = this.modelo.updatePacientes(actualizar);
+			this.vista.mostrarMensajeActualizacionPacientes(respuesta);;
+			
+		} catch (IOException e){
+			e.printStackTrace();	
+	}		
+	}
+
+
 }

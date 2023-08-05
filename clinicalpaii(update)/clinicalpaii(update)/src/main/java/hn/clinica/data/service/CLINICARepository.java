@@ -38,6 +38,16 @@ public interface CLINICARepository {
 	Call<ResponseBody> crearPaciente(@Body Pacientes nuevo);
 
 	
+	// METODO MODIFIAR PACIENTES
+		@Headers({
+		    "Content-Type: application/json",
+		    "Accept-Charset: utf-8",
+		    "User-Agent: Retrofit-Sample-App"
+		})
+		@PUT("/pls/apex/wencellr_pav2_98_2/clinica/pacientes/")
+		Call<ResponseBody> modificarPacientes(@Body Pacientes actualizar );
+		
+	
 	// METODO CONSULTA CITA
 	@Headers({
 	    "Content-Type: application/json",

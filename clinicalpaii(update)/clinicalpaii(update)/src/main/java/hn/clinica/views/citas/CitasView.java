@@ -170,7 +170,6 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         save.addClickListener(e -> {
             try {
             	
-            	String MensajeExito = "Registro Guardado!";
                 if (this.citas == null) {
                     //CEANDO REGISTRO 
                 	this.citas = new Citas();
@@ -195,6 +194,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 	this.citas.setDetalle(this.detalle.getValue());
                 	this.controlador.actualizarCitas(citas);
                 }
+                
                 clearForm();
                 refreshGrid();
                 UI.getCurrent().navigate(CitasView.class);
@@ -206,6 +206,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
             } 
             
         });
+        
+        
         
         cancel.addClickListener(e -> {
             clearForm();

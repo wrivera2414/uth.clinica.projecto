@@ -99,20 +99,19 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         });
         
         //mando a traer los pacientes del repositorio
-        this.controlador.consultarPacientes();
 
         cancel.addClickListener(e -> {
             clearForm();
             refreshGrid();
         });
+        this.controlador.consultarPacientes();
 
         save.addClickListener(e -> {
         	
             try {
-                String MensajeExito = "Registro Guardado!";
-
-                if (this.paciente == null) {    
-               
+            	
+                if (this.paciente == null){    
+                	//CREANDO REGISTROS PANTALLA PACIENTES
                    this.paciente = new Pacientes();
                    this.paciente.setIdentidad(this.identidad.getValue());
                    this.paciente.setNombre(this.nombre.getValue());
@@ -122,29 +121,34 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
                    this.paciente.setPeso(this.peso.getValue());
                    this.paciente.setAltura(this.altura.getValue());
                    this.controlador.crearPacientes(paciente);
+
                    
-                   
-                   
-                } else 
+                }else 
                 {
-                	//this.controlador.modificarPacientes(paciente);
-                	 Notification n = Notification.show(
-                             "Eerror al almacenar informacion por favor revise su conexion o intente nuevamente");
-                	 n.setPosition(Position.MIDDLE);
-                     n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                     
+                	this.paciente.setIdentidad(this.identidad.getValue());
+                    this.paciente.setNombre(this.nombre.getValue());
+                    this.paciente.setTelefono(this.telefono.getValue());
+            	    this.paciente.setSangre(this.sangre.getValue());	 
+                    this.paciente.setEdad(this.edad.getValue());
+                    this.paciente.setPeso(this.peso.getValue());
+                    this.paciente.setAltura(this.altura.getValue());
+                	this.controlador.modificarPacientes(paciente);
                 }
+                
+                
                 clearForm();
                 refreshGrid();
-                this.paciente = null;
-                
                 UI.getCurrent().navigate(PacientesView.class);
+                
+                
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
-                        "Eerror al almacenar informacion por favor revise su conexion o intente nuevamente");
+                        "Error al almacenar informacion por favor revise su conexion o intente nuevamente");
                 n.setPosition(Position.MIDDLE);
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }});
+        }
+            
+        });
     }
     
 
@@ -188,6 +192,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         FormLayout formLayout = new FormLayout();
         nombre = new TextField("Nombre");
         identidad = new TextField("Identidad");
+        identidad.setSuffixComponent(new Span("DNI"));
         telefono = new TextField("Telefono");
         telefono.setPrefixComponent(new Span("+504"));
         edad = new TextField("Edad");
@@ -277,7 +282,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 	@Override
 	public void mostrarMensajeCreacion(boolean Exito) {
 		
-        String MensajeExito = "Registro Guardado!";
+        String MensajeExito = "Registro Creado!";
         
 		if(!Exito) 
 		{
@@ -287,6 +292,18 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 	
         Notification.show(MensajeExito);
 
+		
+	}
+
+
+	@Override
+	public void mostrarMensajeActualizacionPacientes(boolean exito) {
+		String mesajeMotrar = "Registro actualizado con exito";
+	    if(!exito) {
+	  	  mesajeMotrar = "Registro no pudo ser actualizado";
+	    }
+	    
+	    Notification.show(mesajeMotrar);
 		
 	}
 }

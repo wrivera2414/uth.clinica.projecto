@@ -73,6 +73,13 @@ public class CLINICARepositoryImpl {
 
 			
 	}
+	
+	//METODO PARA MODIFICAR PACIENTES DE BASE DE DATOS EN VIEW PACIENTES
+			public boolean updatePacientes(Pacientes actualizar) throws IOException{	
+				Call <ResponseBody> call = client.getDataService().modificarPacientes(actualizar);
+				Response<ResponseBody> response = call.execute(); // AQUI ES DONDE SE CONSULTA A LA URL DE LA BASE DE DATOS.
+					return response.isSuccessful();
+				}
 
 	
 	
