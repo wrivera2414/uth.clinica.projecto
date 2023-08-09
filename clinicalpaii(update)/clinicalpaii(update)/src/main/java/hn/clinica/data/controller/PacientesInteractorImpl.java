@@ -50,7 +50,7 @@ public class PacientesInteractorImpl implements PacientesInteractor {
 	public void modificarPacientes(Pacientes actualizar) {
 		try {
 			boolean respuesta = this.modelo.updatePacientes(actualizar);
-			this.vista.mostrarMensajeActualizacionPacientes(respuesta);;
+			this.vista.mostrarMensajeActualizacionPacientes(respuesta);
 			
 		} catch (IOException e){
 			e.printStackTrace();	
