@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -20,6 +21,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import hn.clinica.data.controller.MedicamentosInteractor;
 import hn.clinica.data.controller.MedicamentosInteractorImpl;
+import hn.clinica.data.entity.Citas;
 import hn.clinica.data.entity.Medicamentos;
 import hn.clinica.views.MainLayout;
 import java.util.Collection;
@@ -30,22 +32,24 @@ import java.util.List;
 @Uses(Icon.class)
 public class MedicamentosView extends Div implements MedicamentosViewModel{
 
+    private final TextField codigo = new TextField("Codigo");
+    private final TextField nombre = new TextField("Nombre");
+    private final TextField fabricante = new TextField("Fabricante");
+    private final TextField principioa = new TextField("Principio");
+    private final TextField fechav= new TextField("Fecha vencimiento");
+    private final TextField stock= new TextField("Stock");
     private static Grid<Medicamentos> grid;
-
-    private Filters filters;
     private List<Medicamentos> medicamentos;
     private MedicamentosInteractor controlador;
-   
+    private Medicamentos medicamentoNuevo;
     
     
     //CONSTRUCTOR	
     public MedicamentosView() {
- 
         setSizeFull();
         addClassNames("medicamentos-view");
         this.controlador = new MedicamentosInteractorImpl(this);
-        filters = new Filters(() -> refrescarGridMedicamentos(medicamentos));
-        VerticalLayout layout = new VerticalLayout(createMobileFilters(), filters, createGrid());
+        VerticalLayout layout = new VerticalLayout(createMobileFilters(), Filters(), createGrid());
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
@@ -64,30 +68,12 @@ public class MedicamentosView extends Div implements MedicamentosViewModel{
         Span filtersHeading = new Span("Filters");
         mobileFilters.add(mobileIcon, filtersHeading);
         mobileFilters.setFlexGrow(1, filtersHeading);
-        mobileFilters.addClickListener(e -> {
-            if (filters.getClassNames().contains("visible")) {
-                filters.removeClassName("visible");
-                mobileIcon.getElement().setAttribute("icon", "lumo:plus");
-            } else {
-                filters.addClassName("visible");
-                mobileIcon.getElement().setAttribute("icon", "lumo:minus");
-            }
-        });
+
         return mobileFilters;
     }
 
-    public static class Filters extends Div implements BeforeEnterObserver,MedicamentosViewModel {
-
-        private final TextField codigo = new TextField("Codigo");
-        private final TextField nombre = new TextField("Nombre");
-        private final TextField fabricante = new TextField("Fabricante");
-        private final TextField principioa = new TextField("Principio");
-        private final TextField fechav= new TextField("Fecha vencimiento");
-        private final TextField stock= new TextField("Stock");
-        private List<Medicamentos> medicamento;
-        
-        public Filters(Runnable onSearch) {
-
+      private Div Filters() {
+    	  Div container  = new Div();
             setWidthFull();
             addClassName("filter-layout");
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
@@ -101,9 +87,11 @@ public class MedicamentosView extends Div implements MedicamentosViewModel{
             stock.setPrefixComponent(VaadinIcon.STOCK.create());
             
             // Action buttons
-            Button resetBtn = new Button("Cancelar");
+            Button resetBtn = new Button("Eliminar");
             resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             resetBtn.addClickListener(e -> {
+        		this.controlador.eliminarMedicamento(this.medicamentoNuevo.getCodigo());
+        		this.controlador.consultarMedicamentos();
                 codigo.clear();
                 nombre.clear();
                 fabricante.clear();
@@ -112,127 +100,46 @@ public class MedicamentosView extends Div implements MedicamentosViewModel{
                 stock.clear();
                 
             });
-            Button searchBtn = new Button("Buscar");
+            Button searchBtn = new Button("Insertar");
             searchBtn.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
             searchBtn.addClickListener(e -> {
-            	boolean encontrar = false;
-            	if (!encontrar)
-            	{
-            		BuscarMedicamento();
-            		
-            	} else {
-					
-            		
-            		
-            	}});
+                if (this.medicamentoNuevo == null) {
+                    //CEANDO REGISTRO 
+                	this.medicamentoNuevo = new Medicamentos();
+                	this.medicamentoNuevo.setCodigo(this.codigo.getValue());
+                	this.medicamentoNuevo.setNombre(this.nombre.getValue());
+                	this.medicamentoNuevo.setFabricante(this.fabricante.getValue());
+                	this.medicamentoNuevo.setPrincipioa(this.principioa.getValue());
+                	this.medicamentoNuevo.setFechav(this.fechav.getValue());
+                	this.medicamentoNuevo.setStock(this.stock.getValue());
+                	this.controlador.crearNuevoMedicamento(medicamentoNuevo);
+                	this.controlador.consultarMedicamentos();
+                	populateForm(null);
+                	
+                    this.codigo.clear();
+                    this.nombre.clear();
+                    this.fabricante.clear();
+                    this.principioa.clear();
+                    this.fechav.clear();
+                    this.stock.clear();
+                }else {
+                	
+                }
+            });
 
             Div actions = new Div(resetBtn, searchBtn);
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
 
             add(codigo, nombre, fabricante, principioa, fechav, stock, actions);
+            return container;
         }
 
-       private void BuscarMedicamento() {
-			// Busca de Medicamentos
-
-		}
-
-	/* private Component createDateRangeFilter() {
-            telefono.setPlaceholder("From");
-
-            principioa.setPlaceholder("To");
-
-            // For screen readers
-            setAriaLabel(telefono, "From date");
-            setAriaLabel(principioa, "To date");
-
-            FlexLayout dateRangeComponent = new FlexLayout(telefono, new Text(" – "), principioa);
-            dateRangeComponent.setAlignItems(FlexComponent.Alignment.BASELINE);
-            dateRangeComponent.addClassName(LumoUtility.Gap.XSMALL);
-
-            return dateRangeComponent;
-        }
-
-        private void setAriaLabel(DatePicker datePicker, String label) {
-            datePicker.getElement().executeJs("const input = this.inputElement;" //
-                    + "input.setAttribute('aria-label', $0);" //
-                    + "input.removeAttribute('aria-labelledby');", label);
-        }*/
-
-      /*  @Override
-        public Predicate toPredicate(Root<SamplePerson> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-            List<Predicate> predicates = new ArrayList<>();
-
-                
-            
-            if (!codigo.isEmpty()) {
-                String lowerCaseFilter = codigo.getValue().toLowerCase();
-                Predicate firstNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")),
-                        lowerCaseFilter + "%");
-                Predicate lastNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")),
-                        lowerCaseFilter + "%");
-                predicates.add(criteriaBuilder.or(firstNameMatch, lastNameMatch));
-            }
-            if (!nombre.isEmpty()) {
-                String databaseColumn = "phone";
-                String ignore = "- ()";
-
-                String lowerCaseFilter = ignoreCharacters(ignore, nombre.getValue().toLowerCase());
-                Predicate phoneMatch = criteriaBuilder.like(
-                        ignoreCharacters(ignore, criteriaBuilder, criteriaBuilder.lower(root.get(databaseColumn))),
-                        "%" + lowerCaseFilter + "%");
-                predicates.add(phoneMatch);
-
-            }
-            if (telefono.getValue() != null) {
-                String databaseColumn = "dateOfBirth";
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(databaseColumn),
-                        criteriaBuilder.literal(telefono.getValue())));
-            }
-            if (principioa.getValue() != null) {
-                String databaseColumn = "dateOfBirth";
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.literal(principioa.getValue()),
-                        root.get(databaseColumn)));
-            }
-            if (!fechav.isEmpty()) {
-                String databaseColumn = "occupation";
-                List<Predicate> occupationPredicates = new ArrayList<>();
-                for (String occupation : fechav.getValue()) {
-                    occupationPredicates
-                            .add(criteriaBuilder.equal(criteriaBuilder.literal(occupation), root.get(databaseColumn)));
-                }
-                predicates.add(criteriaBuilder.or(occupationPredicates.toArray(Predicate[]::new)));
-            }
-            if (!stock.isEmpty()) {
-                String databaseColumn = "role";
-                List<Predicate> rolePredicates = new ArrayList<>();
-                for (String stock  : stock.getValue()) {
-                    rolePredicates.add(criteriaBuilder.equal(criteriaBuilder.literal(role), root.get(databaseColumn)));
-                }
-                predicates.add(criteriaBuilder.or(rolePredicates.toArray(Predicate[]::new)));
-            }
-            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
-        }*/
-
-	@Override
-	public void beforeEnter(BeforeEnterEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void refrescarGridMedicamentos(List<Medicamentos> medicamento) {
-		// TODO Auto-generated method stub
-		//Este Metodo refresca el Grid
-		
-				Collection<Medicamentos> items = medicamento;
-				grid.setItems(items);
-				this.medicamento = medicamento;
-	}
-
+    private void populateForm(Medicamentos value) {
+    	this.medicamentoNuevo = value;
     }
 
+    
     private Component createGrid() {
 
         grid = new Grid<>(Medicamentos.class, false);
@@ -241,34 +148,45 @@ public class MedicamentosView extends Div implements MedicamentosViewModel{
         grid.addColumn("fabricante").setAutoWidth(true).setHeader("Fabricante");
         grid.addColumn("principioa").setAutoWidth(true).setHeader("Principio Activo");
         grid.addColumn("fechav").setAutoWidth(true).setHeader("Fecha vencimiento");
-        grid.addColumn("stock").setAutoWidth(true).setHeader("Stok");
-        
+        grid.addColumn("stock").setAutoWidth(true).setHeader("Stok");        
         this.controlador.consultarMedicamentos();
-
-     //   grid.addColumn("role").setAutoWidth(true);
-
-        
-        /*grid.setItems(query -> samplePersonService.list(
-                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
-                filters).stream());*/
-        
-        
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
-
+        grid.asSingleSelect().addValueChangeListener(event -> {
+        	if(event.getValue() != null) {
+        		populateForm(event.getValue());
+        	}else {
+        		populateForm(null);
+        	}
+        });
         return grid;
     }
     
-    
-
 	@Override
 	public void refrescarGridMedicamentos(List<Medicamentos> medicamento) {
 		Collection<Medicamentos> items = medicamento;
 		grid.setItems(items);
 		this.medicamentos = medicamento;
 	}
-    
-    
 
+	@Override
+	public void mostrarMensajeCreacion(boolean exito) {
+	      String mesajeMotrar = "Registro creado con exito";
+	      if(!exito) {
+	    	  mesajeMotrar = "Registro no pudo ser creado";
+	      }
+	      
+	      Notification.show(mesajeMotrar);		
+	}
 
+	@Override
+	public void mostrarMensajeEliminar(boolean exito) {
+	      String mesajeMotrar = "Registro eliminado con exito";
+	      if(!exito) {
+	    	  mesajeMotrar = "Registro no pudo ser eliminado";
+	      }
+	      
+	      Notification.show(mesajeMotrar);
+	}
+    
 }

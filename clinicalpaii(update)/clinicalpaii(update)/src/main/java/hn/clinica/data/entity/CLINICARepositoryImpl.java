@@ -124,10 +124,21 @@ public class CLINICARepositoryImpl {
 			}
 			else 
 			{
-				return null;
-				
+				return null;			
 			}
-	}
+		}
+		
+		public boolean crearMedicamento(Medicamentos nuevo) throws IOException{
+			Call<ResponseBody> call = this.client.getDataService().crearMedicamento(nuevo);
+			Response<ResponseBody> response = call.execute();
+			return response.isSuccessful();
+		}
+		
+		public boolean borrarMedicamento(String idMed) throws IOException{
+			Call<ResponseBody> call = this.client.getDataService().eliminarMedicamento(idMed);
+			Response<ResponseBody> response = call.execute();
+			return response.isSuccessful();
+		}
 		
 		// METODO PARA CONSULTAR LA TABLA CONSULTAS DE BASE DE DATOS EN VIEW CONSULTAS
 		public ResponseConsulta getConsulta() throws IOException {
