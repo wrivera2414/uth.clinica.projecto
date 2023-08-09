@@ -1,6 +1,7 @@
 package hn.clinica.data.service;
 
 import hn.clinica.data.entity.Citas;
+import hn.clinica.data.entity.Medicamentos;
 import hn.clinica.data.entity.Pacientes;
 import hn.clinica.data.entity.ResponseCitas;
 import hn.clinica.data.entity.ResponseConsulta;
@@ -90,9 +91,25 @@ public interface CLINICARepository {
 	    "User-Agent: Retrofit-Sample-App"
 	})
 	
-	@GET("pls/apex/wencellr_pav2_98_2/clinica/medicamentos/")
+	@GET("pls/apex/wencellr_pav2_98_2/clinica/medicamentos")
 	Call<ResponseMedicamento> obtenerMedicamentos();
 	
+	
+	@Headers({
+		"Content-Type: application/json",
+		"Accept-Charset: utf-8",
+		"User-Agent: Retrofit-Sample-App"
+	})
+	@POST("pls/apex/wencellr_pav2_98_2/clinica/medicamentos")
+	Call<ResponseBody> crearMedicamento(@Body Medicamentos medicamento);
+	
+	
+	@Headers({
+		"Accept-Charset: utf-8",
+		"User-Agent: Retrofit-Sample-App"
+	})
+	@DELETE("pls/apex/wencellr_pav2_98_2/clinica/medicamentos")
+	Call<ResponseBody> eliminarMedicamento(@Query("codigo") String idMed);	
 	
 	@Headers({
 	    "Content-Type: application/json",
