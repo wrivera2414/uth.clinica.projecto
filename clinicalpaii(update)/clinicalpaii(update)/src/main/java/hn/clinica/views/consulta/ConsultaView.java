@@ -64,6 +64,7 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 	// private Consulta consulta;
 	List<Consulta> filteredConsultas;
 	private ConsultaInteractorImpl controlador;
+	private Consulta consulta;
 
 	// Contructor
 	public ConsultaView() {
@@ -109,7 +110,25 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 			//refrescarGridConsulta(filteredConsultas);
 		});
 
-		Div actions = new Div(resetBtn, searchBtn);
+		Button actBtn = new Button("Actualizar");
+		actBtn.addClassName("consulta-view-button-2");
+		actBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
+		actBtn.addClickListener(e -> {
+			if(this.consulta != null) {
+				this.consulta.setIdentidad(this.identidad.getValue());
+				this.consulta.setNombre(this.nombre.getValue());
+				this.consulta.setTelefono(this.telefono.getValue());
+				this.consulta.setMedicamento(this.medicamento.getValue());
+				this.consulta.setStocks(this.stocks.getValue());
+				this.consulta.setFecha(this.fecha.getValue());
+				this.controlador.actualizarConsulta(this.consulta);
+				
+			
+			}
+			this.controlador.consultarConsultas();
+
+		});
+		Div actions = new Div(resetBtn, searchBtn, actBtn);
 		// <theme-editor-local-classname>
 		actions.addClassName("consulta-view-div-1");
 		actions.addClassName(LumoUtility.Gap.SMALL);
@@ -124,13 +143,19 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 
 		grid.asSingleSelect().addValueChangeListener(event -> {
 			if (event.getValue() != null) {
-				UI.getCurrent().navigate(String.format(CONSULTA_EDIT_ROUTE_TEMPLATE, event.getValue().getIdentidad()));
+				this.consulta = new Consulta();
+				setValueObject(event.getValue());
+				populateForm(event.getValue());
 			} else {
-				clearForm();
-				UI.getCurrent().navigate(ConsultaView.class);
+				setValueObject(null);
+				populateForm(null);
 			}
 		});
 
+	}
+
+	private void setValueObject(Consulta value) {
+		this.consulta = value;
 	}
 
 	public void beforeEnter(BeforeEnterEvent event) {
@@ -174,12 +199,12 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 			this.stocks.setValue("");
 			this.fecha.setValue("");
 		} else {
-			this.identidad.setValue(e.getIdentidad());
-			this.nombre.setValue(e.getNombre());
-			this.medicamento.setValue(e.getMedicamento());
-			this.telefono.setValue(e.getTelefono());
-			this.stocks.setValue(e.getStocks());
-			this.fecha.setValue(e.getFecha());
+			this.identidad.setValue(e.getIdentidad()+"");
+			this.nombre.setValue(e.getNombre()+"");
+			this.medicamento.setValue(e.getMedicamento()+"");
+			this.telefono.setValue(e.getTelefono()+"");
+			this.stocks.setValue(e.getStocks()+"");
+			this.fecha.setValue(e.getFecha()+"");
 		}
 
 	}
@@ -342,6 +367,15 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 		grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
 		return grid;
+	}
+
+	@Override
+	public void mostrarMensajeActualizacion(boolean exito) {
+		String msg = "Registro actualizado correctamente.";
+		if(!exito) {
+			msg = "Error al actualizar registro.";
+		}
+		Notification.show(msg);
 	}
 
 	/*

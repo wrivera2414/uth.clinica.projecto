@@ -141,6 +141,7 @@ public class CLINICARepositoryImpl {
 		}
 		
 		// METODO PARA CONSULTAR LA TABLA CONSULTAS DE BASE DE DATOS EN VIEW CONSULTAS
+		// METODO PARA CONSULTAR LA TABLA CONSULTAS DE BASE DE DATOS EN VIEW CONSULTAS
 		public ResponseConsulta getConsulta() throws IOException {
 			Call<ResponseConsulta> call = client.getDataService().obtenerConsulta();
 			Response<ResponseConsulta> response = call.execute(); // AQUI ES DONDE SE CONSULTA A LA URL DE LA BASE DE DATOS.
@@ -151,6 +152,13 @@ public class CLINICARepositoryImpl {
 
 			}
 		}
+		public boolean updateConsulta(Consulta actualizada) throws IOException {
+			Call<ResponseBody> call = this.client.getDataService().actualizarConsulta(actualizada);
+			Response<ResponseBody> response = call.execute();
+			return response.isSuccessful();
+		}
+
+		
 
 		
 }

@@ -11,8 +11,6 @@ import hn.clinica.data.entity.Pacientes;
 public interface ConsultaViewModel {
 
 	void refrescarGridConsulta(List<Consulta> consulta);
-	
+	void mostrarMensajeActualizacion(boolean exito);
 	void beforeEnter(BeforeEnterEvent event);
-
-
 }
