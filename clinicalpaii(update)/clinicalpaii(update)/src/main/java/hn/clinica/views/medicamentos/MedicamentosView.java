@@ -115,13 +115,6 @@ public class MedicamentosView extends Div implements MedicamentosViewModel{
                 	this.controlador.crearNuevoMedicamento(medicamentoNuevo);
                 	this.controlador.consultarMedicamentos();
                 	populateForm(null);
-                	
-                    this.codigo.clear();
-                    this.nombre.clear();
-                    this.fabricante.clear();
-                    this.principioa.clear();
-                    this.fechav.clear();
-                    this.stock.clear();
                 }else {
                 	
                 }

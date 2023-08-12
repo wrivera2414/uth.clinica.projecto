@@ -15,6 +15,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.PageTitle;
@@ -55,10 +56,11 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 	private Filters filters;
 	private TextField identidad = new TextField("Identidad");
 	private TextField nombre = new TextField("Paciente");
-	private TextField medicamento = new TextField("Medicamento");
+	private ComboBox<Medicamentos> medicamento = new ComboBox<>("Medicamento");
 	private TextField telefono = new TextField("Telefono");
 	private TextField stocks = new TextField("Stock");
 	private TextField fecha = new TextField("Fecha");
+	private List<Medicamentos> medicamentos;
 
 	private List<Consulta> consultas;
 	// private Consulta consulta;
@@ -71,7 +73,7 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 
 		consultas = new ArrayList<>();
 		this.controlador = new ConsultaInteractorImpl(this);
-
+		this.controlador.consultarMedicamentos();
 		setSizeFull();
 		addClassNames("consulta-view");
 
@@ -89,7 +91,8 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 		stocks.setSuffixComponent(new Span("Uds"));
 		nombre.setClearButtonVisible(true);
 		// nombre.setValue("Nombre y Apeliido");
-
+		medicamento.setItems(this.medicamentos);
+		medicamento.setItemLabelGenerator(Medicamentos::getNombre);
 		// ACCION DE BOTONES
 		Button resetBtn = new Button("Limpiar");
 		// <theme-editor-local-classname>
@@ -118,14 +121,12 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 				this.consulta.setIdentidad(this.identidad.getValue());
 				this.consulta.setNombre(this.nombre.getValue());
 				this.consulta.setTelefono(this.telefono.getValue());
-				this.consulta.setMedicamento(this.medicamento.getValue());
+				this.consulta.setMedicamento(this.medicamento.getValue().getNombre());
 				this.consulta.setStocks(this.stocks.getValue());
 				this.consulta.setFecha(this.fecha.getValue());
 				this.controlador.actualizarConsulta(this.consulta);
-				
-			
+				this.controlador.consultarConsultas();
 			}
-			this.controlador.consultarConsultas();
 
 		});
 		Div actions = new Div(resetBtn, searchBtn, actBtn);
@@ -194,14 +195,14 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 		if (e == null) {
 			this.identidad.setValue("");
 			this.nombre.setValue("");
-			this.medicamento.setValue("");
+			this.medicamento.clear();;
 			this.telefono.setValue("");
 			this.stocks.setValue("");
 			this.fecha.setValue("");
 		} else {
 			this.identidad.setValue(e.getIdentidad()+"");
 			this.nombre.setValue(e.getNombre()+"");
-			this.medicamento.setValue(e.getMedicamento()+"");
+			//this.medicamento.setValue(e.getMedicamento());
 			this.telefono.setValue(e.getTelefono()+"");
 			this.stocks.setValue(e.getStocks()+"");
 			this.fecha.setValue(e.getFecha()+"");
@@ -294,7 +295,7 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 		List<Consulta> filteredConsultas = new ArrayList<>();
 		String identidadFilter = identidad.getValue().trim();
 		String nombreFilter = nombre.getValue().trim();
-		String medicamentoFilter = medicamento.getValue().trim();
+		String medicamentoFilter = medicamento.getValue().getNombre().trim();;
 		String telefonoFilter = telefono.getValue().trim();
 		String stocksFilter = stocks.getValue().trim();
 		String fechaFilter = fecha.getValue().trim();
@@ -376,6 +377,11 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 			msg = "Error al actualizar registro.";
 		}
 		Notification.show(msg);
+	}
+
+	@Override
+	public void refrescarConsultaMedicamentos(List<Medicamentos> medicamento) {
+		this.medicamentos = medicamento;
 	}
 
 	/*
