@@ -41,36 +41,36 @@ import java.util.List;
 import java.util.Optional;
 
 
-@PageTitle("Consulta")
+@PageTitle("CONSULTA")
 @Route(value = "consulta/:consultaID?/:action?(edit)", layout = MainLayout.class)
 @Uses(Icon.class)
-public class ConsultaView extends Div implements PacientesViewModel {
+public class ConsultaView extends Div implements ConsultaViewModel {
 	
 	
 	private static final String CONSULTA_ID = "consultaID";
 	private final String CONSULTA_EDIT_ROUTE_TEMPLATE = "consulta/%s/edit";
     private Grid<Consulta> grid;
     private Filters filters;
-    private TextField Identidad = new TextField("Identidad");
-    private  TextField Nombre = new TextField("Nombre");
-    private  TextField Telefono = new TextField("Telefono");
-    private  TextField Medicamentos = new TextField("Medicamentos");
-    private  TextField Stock = new TextField("Stock");
-    private  TextField Fecha = new TextField("Fecha");
+    private TextField identidad = new TextField("Id Consulta");
+    private  TextField nombre = new TextField("Paciente");
+    private  TextField medicamento = new TextField("Medicamento");
+    private  TextField telefono = new TextField("Cita");
+    private  TextField stocks = new TextField("Stock");
+    private  TextField fecha = new TextField("Fecha");
 
     
 
-    private List<Pacientes> pacientes;
-
-    private PacientesInteractorImpl controlador;
+    private List<Consulta> consultas;
+    //private Consulta consulta;
+    private ConsultaInteractorImpl controlador;
 
 
     
     	//Contructor 
     	public ConsultaView() {
     		
-    	pacientes = new ArrayList<>();
-    	this.controlador = new PacientesInteractorImpl(this);
+    	consultas = new ArrayList<>();
+    	this.controlador = new ConsultaInteractorImpl(this);
   
     	
         setSizeFull();
@@ -78,30 +78,33 @@ public class ConsultaView extends Div implements PacientesViewModel {
         
         
         
-        filters = new Filters(() -> refrescarGridPacientes(pacientes));
+        filters = new Filters(() -> refrescarGridConsulta(consultas));
         HorizontalLayout layout1 = new HorizontalLayout(filters,createMobileFilters());
         VerticalLayout layout = new VerticalLayout(createGrid());
-        Nombre.setPlaceholder("");
+        nombre.setPlaceholder("");
         
         //componenetes de texfield filter
-        Identidad.setClearButtonVisible(true);
-        Identidad.setPrefixComponent(VaadinIcon.USER.create());
-        Identidad.setClearButtonVisible(true);
-        Telefono.setPrefixComponent(new Span("+504"));
-        Medicamentos.setPrefixComponent(VaadinIcon.EYEDROPPER.create());
-        Stock.setSuffixComponent(new Span("Uds"));
-        Nombre.setClearButtonVisible(true);
-        Nombre.setValue("Nombre y Apeliido");
+        identidad.setClearButtonVisible(true);
+        identidad.setPrefixComponent(VaadinIcon.USER.create());
+        identidad.setClearButtonVisible(true);
+        medicamento.setPrefixComponent(new Span("+504"));
+        telefono.setPrefixComponent(VaadinIcon.EYEDROPPER.create());
+        stocks.setSuffixComponent(new Span("Uds"));
+        nombre.setClearButtonVisible(true);
+        //nombre.setValue("Nombre y Apeliido");
 
         // ACCION DE BOTONES
         Button resetBtn = new Button("Limpiar");
+        //<theme-editor-local-classname>
+        resetBtn.addClassName("consulta-view-button-1");
         resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY,ButtonVariant.LUMO_ERROR);
         resetBtn.addClickListener(e -> {
-            Nombre.clear();
-            Telefono.clear();
-            Fecha.clear();
-            Medicamentos.clear();
-            Stock.clear();
+            nombre.clear();
+            medicamento.clear();
+            fecha.clear();
+            telefono.clear();
+            stocks.clear();
+            identidad.clear();
             //endDate.clear();
            // occupations.clear();
             //roles.clear();
@@ -110,6 +113,8 @@ public class ConsultaView extends Div implements PacientesViewModel {
 
         //ACCION DE BUSCAR POR MEDIO DEL FILTRO
         Button searchBtn = new Button("Buscar");
+        //<theme-editor-local-classname>
+        searchBtn.addClassName("consulta-view-button-2");
         searchBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
         searchBtn.addClickListener(e -> {
         
@@ -119,10 +124,12 @@ public class ConsultaView extends Div implements PacientesViewModel {
         
 
         Div actions = new Div(resetBtn, searchBtn);
+        //<theme-editor-local-classname>
+        actions.addClassName("consulta-view-div-1");
         actions.addClassName(LumoUtility.Gap.SMALL);
         actions.addClassName("actions");
 
-        add(Identidad,Nombre, Telefono,Medicamentos,Stock,Fecha,actions);
+        add(identidad,nombre, medicamento,telefono,stocks,fecha,actions);
 
         layout.setSizeFull();
         layout.setPadding(false);
@@ -139,8 +146,6 @@ public class ConsultaView extends Div implements PacientesViewModel {
             }
         });
         
-        
-        
 
     }
     	
@@ -149,7 +154,7 @@ public class ConsultaView extends Div implements PacientesViewModel {
     	        Optional<String> consultaId = event.getRouteParameters().get(CONSULTA_ID);
     	        boolean encontrado = false;
     	       if (consultaId.isPresent()){
-    	        	for (Pacientes e: this.pacientes){
+    	        	for (Consulta e: this.consultas){
     	        		if(e.getIdentidad().equals(consultaId.get()))
     	        		{
     	                    populateForm(e);
@@ -162,7 +167,7 @@ public class ConsultaView extends Div implements PacientesViewModel {
     	        			 Notification.show(String.format("El empleado con identidad= %s", consultaId.get() + "No fue encontrado"),
     	                             3000, Notification.Position.BOTTOM_START);
     	                     refreshGrid();
-    	                     event.forwardTo(PacientesView.class); 
+    	                     event.forwardTo(ConsultaView.class); 
     	        			
     	        		}
     	        	}
@@ -181,21 +186,25 @@ public class ConsultaView extends Div implements PacientesViewModel {
         populateForm(null);
     }
 
-	private void populateForm(Pacientes e) {
+	private void populateForm(Consulta e) {
 
 		if(e == null) 
     	{
-    		this.Identidad.setValue("");	
-		    this.Nombre.setValue("");	
-		    this.Telefono.setValue("");	
-
+    		this.identidad.setValue("");	
+		    this.nombre.setValue("");	
+		    this.medicamento.setValue("");	
+		    this.telefono.setValue("");
+		    this.stocks.setValue("");
+		    this.fecha.setValue("");
     	}
     	else 
     	{
-    		this.Identidad.setValue(e.getNombre());	
-    	    this.Nombre.setValue(e.getIdentidad());	
-    	    this.Telefono.setValue(e.getTelefono());	
-
+    		this.identidad.setValue(e.getIdentidad());	
+    	    this.nombre.setValue(e.getNombre());	
+    	    this.medicamento.setValue(e.getMedicamento());	
+    	    this.telefono.setValue(e.getTelefono());
+		    this.stocks.setValue(e.getStocks());
+		    this.fecha.setValue(e.getFecha());
     	} 	
     	
 		}
@@ -289,21 +298,30 @@ public class ConsultaView extends Div implements PacientesViewModel {
     }
     
     
-    
+    @Override
+	public void refrescarGridConsulta(List<Consulta> consulta) {
+		// TODO Auto-generated method stub
+	//Este Metodo refresca el Grid
+		
+		Collection<Consulta> items = consulta;
+		grid.setItems(items);
+		this.consultas = consulta;
+	
+	
+	}
 
     private Component createGrid() {
     	
         grid = new Grid<>(Consulta.class, false);
-        grid.addColumn("identidad").setAutoWidth(true).setHeader("Identidad");
-        grid.addColumn("nombre").setAutoWidth(true).setHeader("Nombre Paciente");
-        grid.addColumn("telefono").setAutoWidth(true).setHeader("Telefono");
-        grid.addColumn("principioa").setAutoWidth(true).setHeader("Medicamento Resetado");
-        grid.addColumn("stock").setAutoWidth(true).setHeader("Cantidad Resetada");
-        grid.addColumn("fecha").setAutoWidth(true).setHeader("Fecha de Cita");
+        grid.addColumn("identidad").setAutoWidth(true).setHeader("IDENTIDAD");
+        grid.addColumn("nombre").setAutoWidth(true).setHeader("PACIENTE");
+        grid.addColumn("telefono").setAutoWidth(true).setHeader("TELEFONO");
+        grid.addColumn("medicamento").setAutoWidth(true).setHeader("MEDICAMENTO");
+        grid.addColumn("stocks").setAutoWidth(true).setHeader("STOCKS");
+        grid.addColumn("fecha").setAutoWidth(true).setHeader("FECHA DE CITA");
         
         
-        
-        this.controlador.consultarPacientes();
+        this.controlador.consultarConsultas();
         
         /*grid.setItems(query -> samplePersonService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
@@ -315,7 +333,7 @@ public class ConsultaView extends Div implements PacientesViewModel {
         return grid;
     }
     
-
+/*
 	@Override
 	public void mostrarMensajeCreacion(boolean Exito) {
 		// TODO Auto-generated method stub
@@ -327,7 +345,7 @@ public class ConsultaView extends Div implements PacientesViewModel {
 	public void refrescarGridPacientes(List<Pacientes> pacientes) {
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 
 
 

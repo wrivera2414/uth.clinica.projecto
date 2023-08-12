@@ -1,5 +1,9 @@
 package hn.clinica.data.entity;
 
+import java.util.List;
+
+
+
 public class Citas {
 
     private String idcita;
@@ -8,7 +12,7 @@ public class Citas {
     private String paciente;
     private String direccion;
     private String telefono;
-    private String detalle;
+    private String detalle;    
 
     public String getIdcita() {
         return idcita;

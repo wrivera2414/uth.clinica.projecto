@@ -5,6 +5,7 @@ import java.io.IOException;
 import hn.clinica.data.entity.CLINICARepositoryImpl;
 import hn.clinica.data.entity.Citas;
 import hn.clinica.data.entity.ResponseCitas;
+import hn.clinica.data.entity.ResponsePacientes;
 import hn.clinica.views.citas.CitasViewModel;
 
 public class CitasInteractorImpl implements CitasInteractor {
@@ -66,4 +67,6 @@ public class CitasInteractorImpl implements CitasInteractor {
 		}
 		
 	}
+	
+
 }
