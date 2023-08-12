@@ -73,6 +73,13 @@ public class CLINICARepositoryImpl {
 
 			
 	}
+	
+	//METODO PARA MODIFICAR PACIENTES DE BASE DE DATOS EN VIEW PACIENTES
+			public boolean updatePacientes(Pacientes actualizar) throws IOException{	
+				Call <ResponseBody> call = client.getDataService().modificarPacientes(actualizar);
+				Response<ResponseBody> response = call.execute(); // AQUI ES DONDE SE CONSULTA A LA URL DE LA BASE DE DATOS.
+					return response.isSuccessful();
+				}
 
 	
 	
@@ -117,11 +124,23 @@ public class CLINICARepositoryImpl {
 			}
 			else 
 			{
-				return null;
-				
+				return null;			
 			}
-	}
+		}
 		
+		public boolean crearMedicamento(Medicamentos nuevo) throws IOException{
+			Call<ResponseBody> call = this.client.getDataService().crearMedicamento(nuevo);
+			Response<ResponseBody> response = call.execute();
+			return response.isSuccessful();
+		}
+		
+		public boolean borrarMedicamento(String idMed) throws IOException{
+			Call<ResponseBody> call = this.client.getDataService().eliminarMedicamento(idMed);
+			Response<ResponseBody> response = call.execute();
+			return response.isSuccessful();
+		}
+		
+		// METODO PARA CONSULTAR LA TABLA CONSULTAS DE BASE DE DATOS EN VIEW CONSULTAS
 		// METODO PARA CONSULTAR LA TABLA CONSULTAS DE BASE DE DATOS EN VIEW CONSULTAS
 		public ResponseConsulta getConsulta() throws IOException {
 			Call<ResponseConsulta> call = client.getDataService().obtenerConsulta();
@@ -133,6 +152,13 @@ public class CLINICARepositoryImpl {
 
 			}
 		}
+		public boolean updateConsulta(Consulta actualizada) throws IOException {
+			Call<ResponseBody> call = this.client.getDataService().actualizarConsulta(actualizada);
+			Response<ResponseBody> response = call.execute();
+			return response.isSuccessful();
+		}
+
+		
 
 		
 }

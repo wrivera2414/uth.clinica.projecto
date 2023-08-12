@@ -163,20 +163,12 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
             }
         });
 
-        // Configure Form
-       // binder = new BeanValidationBinder<>(Citas.class);
-
-        // Bind fields. This is where you'd define e.g. validation rules
-        //binder.forField(idcita).withConverter(new StringToIntegerConverter("Unicamente son permitidos Numeros")).bind("idcita");
-
-        //binder.bindInstanceFields(this);
-        
+   
         this.controlador.consultarCitas();
 
         save.addClickListener(e -> {
             try {
             	
-            	String MensajeExito = "Registro Guardado!";
                 if (this.citas == null) {
                     //CEANDO REGISTRO 
                 	this.citas = new Citas();
@@ -188,7 +180,6 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 	this.citas.setDireccion(this.direccion.getValue());
                 	this.citas.setDetalle(this.detalle.getValue());
                 	this.controlador.crearNuevaCitas(citas);  
-                    //this.controlador.consultarCitas();
 
                 }else {
                     //MODIFICANDO REGISTRO
@@ -201,6 +192,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 	this.citas.setDetalle(this.detalle.getValue());
                 	this.controlador.actualizarCitas(citas);
                 }
+                
                 clearForm();
                 refreshGrid();
                 UI.getCurrent().navigate(CitasView.class);
@@ -212,6 +204,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
             } 
             
         });
+        
+        
         
         cancel.addClickListener(e -> {
             clearForm();

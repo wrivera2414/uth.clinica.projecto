@@ -1,6 +1,5 @@
  package hn.clinica.views.pacientes;
 
-import com.github.javaparser.ast.expr.ThisExpr;
 import com.vaadin.flow.component.UI;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -22,7 +21,6 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouteAlias;
-
 import hn.clinica.data.controller.PacientesInteractor;
 import hn.clinica.data.controller.PacientesInteractorImpl;
 import hn.clinica.data.entity.Pacientes;
@@ -30,7 +28,6 @@ import hn.clinica.views.MainLayout;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import java.util.ArrayList;
 
@@ -58,7 +55,8 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     private Pacientes paciente;
     private PacientesInteractor controlador;
 
-    public PacientesView() {
+    @SuppressWarnings("unlikely-arg-type")
+	public PacientesView() {
         addClassNames("pacientes-view");
         pacientes = new ArrayList<>();
         this.controlador = new PacientesInteractorImpl(this);
@@ -92,6 +90,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
                 UI.getCurrent().navigate(String.format(PACIENTES_EDIT_ROUTE_TEMPLATE, event.getValue().getIdentidad()));
+                identidad.setReadOnly(true);
             } else {
                 clearForm();
                 UI.getCurrent().navigate(PacientesView.class);
@@ -100,51 +99,55 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         
         //mando a traer los pacientes del repositorio
         this.controlador.consultarPacientes();
-
+        
         cancel.addClickListener(e -> {
             clearForm();
             refreshGrid();
         });
+      
 
         save.addClickListener(e -> {
         	
             try {
-                String MensajeExito = "Registro Guardado!";
-
-                if (this.paciente == null) {    
-               
-                   this.paciente = new Pacientes();
-                   this.paciente.setIdentidad(this.identidad.getValue());
-                   this.paciente.setNombre(this.nombre.getValue());
-                   this.paciente.setTelefono(this.telefono.getValue());
-           	       this.paciente.setSangre(this.sangre.getValue());	 
-                   this.paciente.setEdad(this.edad.getValue());
-                   this.paciente.setPeso(this.peso.getValue());
-                   this.paciente.setAltura(this.altura.getValue());
-                   this.controlador.crearPacientes(paciente);
-                   
-                   
-                   
-                } else 
-                {
-                	//this.controlador.modificarPacientes(paciente);
-                	 Notification n = Notification.show(
-                             "Eerror al almacenar informacion por favor revise su conexion o intente nuevamente");
-                	 n.setPosition(Position.MIDDLE);
-                     n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                     
-                }
+            	
+                if (this.paciente == null)
+                {    
+                	//CREANDO REGISTROS PANTALLA PACIENTES
+                    	this.paciente = new Pacientes();
+                    	this.paciente.setIdentidad(this.identidad.getValue());
+                    	this.paciente.setNombre(this.nombre.getValue());
+                    	this.paciente.setTelefono(this.telefono.getValue());
+                    	this.paciente.setSangre(this.sangre.getValue().toString());	 
+                    	this.paciente.setEdad(this.edad.getValue());
+                    	this.paciente.setPeso(this.peso.getValue());
+                    	this.paciente.setAltura(this.altura.getValue());
+                    	this.controlador.crearPacientes(paciente);
+                		
+                	} else 
+                	{
+                		this.paciente.setNombre(this.nombre.getValue());
+                        this.paciente.setTelefono(this.telefono.getValue());
+                  	    this.paciente.setSangre(this.sangre.getValue());	 
+                        this.paciente.setEdad(this.edad.getValue());
+                        this.paciente.setPeso(this.peso.getValue());
+                        this.paciente.setAltura(this.altura.getValue());
+                      	this.controlador.modificarPacientes(paciente);
+					}
+          
+                
                 clearForm();
                 refreshGrid();
-                this.paciente = null;
-                
                 UI.getCurrent().navigate(PacientesView.class);
+                
+                
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
-                        "Eerror al almacenar informacion por favor revise su conexion o intente nuevamente");
+                        "Error al almacenar informacion por favor revise su conexion o intente nuevamente");
                 n.setPosition(Position.MIDDLE);
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }});
+        }
+
+        });
     }
     
 
@@ -188,12 +191,12 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         FormLayout formLayout = new FormLayout();
         nombre = new TextField("Nombre");
         identidad = new TextField("Identidad");
+        identidad.setSuffixComponent(new Span("DNI"));
         telefono = new TextField("Telefono");
         telefono.setPrefixComponent(new Span("+504"));
         edad = new TextField("Edad");
         edad.setSuffixComponent(new Span("Años"));
         sangre = new TextField("Sangre");
-
         peso = new TextField("Peso");
         peso.setSuffixComponent(new Span("Lbs"));
 
@@ -210,6 +213,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 
         splitLayout.addToSecondary(editorLayoutDiv);
     }
+    
 
 
 	private void createButtonLayout(Div editorLayoutDiv) {
@@ -256,7 +260,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     	    this.identidad.setValue(value.getIdentidad());	
     	    this.telefono.setValue(value.getTelefono());	
     	    this.edad.setValue(value.getEdad());
-    	    this.sangre.setValue(value.getSangre());	 
+    	    this.sangre.setValue(value.getSangre());
     	    this.peso.setValue(value.getPeso());	
     	    this.altura.setValue(value.getAltura());	
     	
@@ -277,7 +281,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 	@Override
 	public void mostrarMensajeCreacion(boolean Exito) {
 		
-        String MensajeExito = "Registro Guardado!";
+        String MensajeExito = "Registro Creado Con Exito!";
         
 		if(!Exito) 
 		{
@@ -287,6 +291,18 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 	
         Notification.show(MensajeExito);
 
+		
+	}
+
+
+	@Override
+	public void mostrarMensajeActualizacionPacientes(boolean exito) {
+		String mesajeMotrar = "Registro actualizado con exito";
+	    if(!exito) {
+	  	  mesajeMotrar = "Registro no pudo ser actualizado";
+	    }
+	    
+	    Notification.show(mesajeMotrar);
 		
 	}
 }
