@@ -7,5 +7,6 @@ public interface PacientesInteractor {
 	void consultarPacientes();
 	void crearPacientes(Pacientes nuevo);
 	void modificarPacientes(Pacientes actualizar );
+	void eliminarPaciente(String identidad);
 
 }

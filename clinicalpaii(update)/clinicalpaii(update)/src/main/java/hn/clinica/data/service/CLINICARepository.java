@@ -49,6 +49,15 @@ public interface CLINICARepository {
 		@PUT("/pls/apex/wencellr_pav2_98_2/clinica/pacientes/")
 		Call<ResponseBody> modificarPacientes(@Body Pacientes actualizar );
 		
+		
+		//METODO ELIMINAR PACIENTES
+		@Headers({
+		    "Accept-Charset: utf-8",
+		    "User-Agent: Retrofit-Sample-App"
+		})
+		@DELETE("/pls/apex/wencellr_pav2_98_2/clinica/pacientes/")
+		Call<ResponseBody> eliminarPaciente(@Query("id") String identidad);
+		
 	
 	// METODO CONSULTA CITA
 	@Headers({

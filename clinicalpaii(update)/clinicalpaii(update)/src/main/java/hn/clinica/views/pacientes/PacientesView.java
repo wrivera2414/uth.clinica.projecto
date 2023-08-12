@@ -8,9 +8,11 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
@@ -23,12 +25,17 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouteAlias;
 import hn.clinica.data.controller.PacientesInteractor;
 import hn.clinica.data.controller.PacientesInteractorImpl;
+import hn.clinica.data.entity.Citas;
 import hn.clinica.data.entity.Pacientes;
 import hn.clinica.views.MainLayout;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import org.hibernate.jdbc.BatchedTooManyRowsAffectedException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+
+import java.awt.Event;
 import java.util.ArrayList;
 
 @PageTitle("Pacientes")
@@ -52,11 +59,16 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 
     private final Button cancel = new Button("Cancelar");
     private final Button save = new Button("Guardar");
+    private final Button btnEliminar = new Button("Eliminar");
+
     private Pacientes paciente;
     private PacientesInteractor controlador;
 
     @SuppressWarnings("unlikely-arg-type")
+    //CONTRUCTOR VIEW PACIENTES
 	public PacientesView() {
+    	
+    	
         addClassNames("pacientes-view");
         pacientes = new ArrayList<>();
         this.controlador = new PacientesInteractorImpl(this);
@@ -78,12 +90,6 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         grid.addColumn("altura").setAutoWidth(true);  
         
         
-        
-        /*grid.setItems(query -> pacientesService.list(
-                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
-                .stream());*/
-        
-        
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
@@ -99,13 +105,60 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         
         //mando a traer los pacientes del repositorio
         this.controlador.consultarPacientes();
+
         
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        GridContextMenu<Pacientes> menu = grid.addContextMenu();
+        menu.addItem("Eliminar", event -> {
+         	ConfirmDialog dialog = new ConfirmDialog();
+        	dialog.setHeader("Eliminar Paciente de "+event.getItem().get().getIdentidad());
+        	dialog.setText("Confirma que deseas eliminar El paciente!");
+        	dialog.setCancelable(true);
+        	dialog.setCancelText("Cancelar");
+        	dialog.setCancelButtonTheme("cancel primary");
+        	dialog.addCancelListener(event2 -> {
+             refreshGrid();	
+        	});
+        	dialog.setConfirmText("Eliminar");
+        	dialog.setConfirmButtonTheme("error primary");
+        	dialog.addConfirmListener(event3 -> {
+        	this.controlador.eliminarPaciente(event.getItem().get().getIdentidad());
+        	});
+        	dialog.open();
+        	
+        });
+        
+
+        btnEliminar.addClickListener(e -> {
+        	
+        	try {
+        	 if (this.paciente == null)
+             {    
+             	String mensajeerror= "CAMPO VACIO";
+             		Notification.show(mensajeerror);
+             	} else 
+             	{
+             		this.controlador.eliminarPaciente(this.paciente.getIdentidad());
+             	
+				
+             	}
+        	 
+        	} catch (ObjectOptimisticLockingFailureException Exception) {
+        		  Notification n = Notification.show(
+                          "Error al Eliminar informacion por favor revise su conexion o intente nuevamente");
+                  n.setPosition(Position.MIDDLE);
+                  n.addThemeVariants(NotificationVariant.LUMO_ERROR);			}
+        });
+        
+        
+
         cancel.addClickListener(e -> {
             clearForm();
             refreshGrid();
         });
       
-
+        
+     
         save.addClickListener(e -> {
         	
             try {
@@ -125,6 +178,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
                 		
                 	} else 
                 	{
+                		this.paciente.setIdentidad(this.identidad.getValue());
                 		this.paciente.setNombre(this.nombre.getValue());
                         this.paciente.setTelefono(this.telefono.getValue());
                   	    this.paciente.setSangre(this.sangre.getValue());	 
@@ -133,6 +187,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
                         this.paciente.setAltura(this.altura.getValue());
                       	this.controlador.modificarPacientes(paciente);
 					}
+     
           
                 
                 clearForm();
@@ -148,6 +203,8 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         }
 
         });
+        
+      
     }
     
 
@@ -204,6 +261,9 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         altura = new TextField("Altura");
         altura.setSuffixComponent(new Span("Cm"));
         
+       
+
+        
         
         //Agregar Componentes al Layout
         formLayout.add(nombre, identidad,telefono,sangre, edad, peso, altura);
@@ -217,11 +277,14 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 
 
 	private void createButtonLayout(Div editorLayoutDiv) {
+		
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel);
+        btnEliminar.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                ButtonVariant.LUMO_ERROR);
+        buttonLayout.add(save, cancel, btnEliminar);
         editorLayoutDiv.add(buttonLayout);
     }
 
@@ -304,6 +367,20 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 	    
 	    Notification.show(mesajeMotrar);
 		
+	}
+
+
+	@Override
+	public void mostrarMensajeEliminacionPacientes(boolean exito) {
+		String EliminarPaciente = "Registro Eliminado con exito";
+		refreshGrid();
+
+	    if(!exito) {
+	    	EliminarPaciente = "Registro no pudo ser Eliminado";
+	    }
+	    
+	    Notification.show(EliminarPaciente);
+				
 	}
 }
  

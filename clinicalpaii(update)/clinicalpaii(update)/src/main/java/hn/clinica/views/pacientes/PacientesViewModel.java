@@ -9,5 +9,7 @@ public interface PacientesViewModel {
 	void refrescarGridPacientes(List<Pacientes> pacientes);
 	void mostrarMensajeCreacion(boolean Exito);
 	void mostrarMensajeActualizacionPacientes(boolean exito);
+	void mostrarMensajeEliminacionPacientes(boolean exito);
+
 
 }

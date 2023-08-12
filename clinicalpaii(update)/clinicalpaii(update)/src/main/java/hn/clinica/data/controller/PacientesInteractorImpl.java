@@ -58,4 +58,16 @@ public class PacientesInteractorImpl implements PacientesInteractor {
 	}
 
 
+	@Override
+	public void eliminarPaciente(String identidad) {
+		try {
+			boolean respuesta = this.modelo.deletePacientes(identidad);
+			this.vista.mostrarMensajeEliminacionPacientes(respuesta);
+			
+		} catch (IOException e){
+			e.printStackTrace();	
+	}			
+	}
+
+
 }
