@@ -2,6 +2,7 @@ package hn.clinica.views.citas;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -25,8 +26,10 @@ import com.vaadin.flow.router.Route;
 import java.util.Collection;
 import hn.clinica.data.controller.CitasInteractor;
 import hn.clinica.data.controller.CitasInteractorImpl;
+import hn.clinica.data.controller.PacientesInteractor;
 import hn.clinica.data.entity.Citas;
 import hn.clinica.data.entity.CitasDataReport;
+import hn.clinica.data.entity.Pacientes;
 import hn.clinica.data.service.ReportGenerator;
 import hn.clinica.views.MainLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
@@ -57,6 +60,9 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     private TextField telefono;
     private TextArea detalle;
     private List<Citas> cita;
+    private ComboBox<Pacientes> pacientes;
+    
+    
 
     private final Button save = new Button("Guardar");
     private final Button cancel = new Button("Cancelar");
@@ -98,7 +104,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 .stream());*/
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         GridContextMenu<Citas> menu = grid.addContextMenu();
-        menu.addItem("Eliminar", event -> {
+            menu.addItem("Eliminar", event -> {
          	ConfirmDialog dialog = new ConfirmDialog();
         	dialog.setHeader("Eliminar Cita de "+event.getItem().get().getPaciente());
         	dialog.setText("Confirma que deseas eliminar la cita!");
@@ -219,7 +225,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 	    if(generado) {
 	    	String ubicacion = generador.getUbicacion();
 	    	Anchor url = new Anchor(ubicacion, "Abrir reporte PDF");
-			url.setTarget("_blank"); 
+			url.setTarget("_Blank"); 
 			Notification notificacion = new Notification(url);
 			notificacion.addThemeVariants(NotificationVariant.LUMO_ERROR);
 			notificacion.setDuration(20000);
@@ -299,7 +305,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         identidad.setPlaceholder("Busqueda Paciente");
         identidad.setPrefixComponent(VaadinIcon.BACKSPACE.create());
         paciente = new TextField("Paciente");
-       // paciente.setReadOnly(true);
+        // paciente.setReadOnly(true);
         paciente.setPrefixComponent(VaadinIcon.USER.create());
         direccion = new TextField("Direccion");
         //direccion.setReadOnly(true);
@@ -317,8 +323,12 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
             e.getSource()
                     .setHelperText(e.getValue().length() + "/" + (140));
         });
+        
+        
+        pacientes = new ComboBox<>("Pacientes");
+        pacientes.setItemLabelGenerator(Pacientes::getNombre);       
         //detalle.setValue("Detalle de la cita");
-        formLayout.add(idcita, fecha, identidad, paciente, direccion, telefono, detalle);
+        formLayout.add(idcita, fecha, identidad, paciente, direccion, telefono, detalle, pacientes);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv); 
@@ -363,6 +373,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         	this.direccion.setValue("");
         	this.telefono.setValue("");
         	this.detalle.setValue("");
+        	this.pacientes.setValue(null);
         	} 
         else {
         	//DateTimePicker fechastr = ;
@@ -373,8 +384,14 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         	this.direccion.setValue(value.getDireccion());
         	this.telefono.setValue(value.getTelefono());
         	this.detalle.setValue(value.getDetalle());
+        	//this.pacientes.setVisible(value.getPaciente());
         }
     }
+    
+    
+    
+    
+    
    @Override
 	public void refrescarGridCitas(List<Citas> cita) {
 		// TODO Auto-generated method stub
@@ -423,4 +440,17 @@ public void mostrarMensajeEliminacion(boolean exito) {
 
 	
 }
+
+
+@Override
+public void refrescarComboPacientes(List<Pacientes> pacientes) {
+	Collection<Pacientes> listadopacientes = pacientes;
+	Pacientes.setItems(listadopacientes);
+}
+
+
+
+
+
+
 }

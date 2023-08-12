@@ -98,7 +98,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 .stream());*/
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         GridContextMenu<Citas> menu = grid.addContextMenu();
-        menu.addItem("Eliminar", event -> {
+            menu.addItem("Eliminar", event -> {
          	ConfirmDialog dialog = new ConfirmDialog();
         	dialog.setHeader("Eliminar Cita de "+event.getItem().get().getPaciente());
         	dialog.setText("Confirma que deseas eliminar la cita!");
@@ -225,7 +225,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 	    if(generado) {
 	    	String ubicacion = generador.getUbicacion();
 	    	Anchor url = new Anchor(ubicacion, "Abrir reporte PDF");
-			url.setTarget("_blank"); 
+			url.setTarget("_Blank"); 
 			Notification notificacion = new Notification(url);
 			notificacion.addThemeVariants(NotificationVariant.LUMO_ERROR);
 			notificacion.setDuration(20000);

@@ -12,5 +12,6 @@ public interface ConsultaViewModel {
 
 	void refrescarGridConsulta(List<Consulta> consulta);
 	void mostrarMensajeActualizacion(boolean exito);
+	void refrescarConsultaMedicamentos(List<Medicamentos> medicamento);
 	void beforeEnter(BeforeEnterEvent event);
 }

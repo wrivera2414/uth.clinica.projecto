@@ -19,7 +19,7 @@
     "@vaadin/combo-box": "24.1.2",
     "@vaadin/common-frontend": "0.0.18",
     "@vaadin/component-base": "24.1.2",
-    "@vaadin/confirm-dialog": "24.1.2",
+    "@vaadin/confirm-dialog": "24.1.0",
     "@vaadin/context-menu": "24.1.2",
     "@vaadin/cookie-consent": "24.1.2",
     "@vaadin/crud": "24.1.2",
@@ -43,7 +43,7 @@
     "@vaadin/list-box": "24.1.2",
     "@vaadin/lit-renderer": "24.1.2",
     "@vaadin/login": "24.1.2",
-    "@vaadin/map": "24.1.2",
+    "@vaadin/map": "24.1.4",
     "@vaadin/menu-bar": "24.1.2",
     "@vaadin/message-input": "24.1.2",
     "@vaadin/message-list": "24.1.2",
@@ -117,7 +117,7 @@
       "@vaadin/combo-box": "24.1.2",
       "@vaadin/common-frontend": "0.0.18",
       "@vaadin/component-base": "24.1.2",
-      "@vaadin/confirm-dialog": "24.1.2",
+      "@vaadin/confirm-dialog": "24.1.0",
       "@vaadin/context-menu": "24.1.2",
       "@vaadin/cookie-consent": "24.1.2",
       "@vaadin/crud": "24.1.2",
@@ -141,7 +141,7 @@
       "@vaadin/list-box": "24.1.2",
       "@vaadin/lit-renderer": "24.1.2",
       "@vaadin/login": "24.1.2",
-      "@vaadin/map": "24.1.2",
+      "@vaadin/map": "24.1.4",
       "@vaadin/menu-bar": "24.1.2",
       "@vaadin/message-input": "24.1.2",
       "@vaadin/message-list": "24.1.2",
@@ -197,7 +197,7 @@
       "workbox-core": "7.0.0",
       "workbox-precaching": "7.0.0"
     },
-    "hash": "875719ad0e48f4a5ede279243d80debd2ba4d7b28ee967403cb696412b199868"
+    "hash": "dd20529efe291f992db737e25774fad78b0927670e79986514fd2d032004bc58"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",

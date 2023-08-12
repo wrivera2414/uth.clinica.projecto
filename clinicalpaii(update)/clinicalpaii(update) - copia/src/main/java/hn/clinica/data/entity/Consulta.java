@@ -1,32 +1,21 @@
 package hn.clinica.data.entity;
 
-public class Consulta extends Pacientes {
+public class Consulta {
 	
 	 private String identidad;
      private String nombre;
      private String telefono;
-     private String principioa;
-     private String stock;
+     private String medicamento;
+     private String stocks;
      private String fecha;
-
      
-	public String getPrincipioa() {
-		return principioa;
+     
+
+	public String getMedicamento() {
+		return medicamento;
 	}
-	public void setPrincipioa(String principioa) {
-		this.principioa = principioa;
-	}
-	public String getStock() {
-		return stock;
-	}
-	public void setStock(String stock) {
-		this.stock = stock;
-	}
-	public String getFecha() {
-		return fecha;
-	}
-	public void setFecha(String fecha) {
-		this.fecha = fecha;
+	public void setMedicamento(String medicamento) {
+		this.medicamento = medicamento;
 	}
 	public String getIdentidad() {
 		return identidad;
@@ -46,7 +35,18 @@ public class Consulta extends Pacientes {
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
-	
-	
+	public String getStocks() {
+		return stocks;
+	}
+	public void setStocks(String stocks) {
+		this.stocks = stocks;
+	}
+	public String getFecha() {
+		return fecha;
+	}
+	public void setFecha(String fecha) {
+		this.fecha = fecha;
+	}
+     
 
 }

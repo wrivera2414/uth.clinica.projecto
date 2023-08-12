@@ -1,5 +1,7 @@
 package hn.clinica.data.entity;
 
+import java.util.Collection;
+
 public class Pacientes {
 
     private String nombre;
@@ -9,6 +11,7 @@ public class Pacientes {
     private String sangre;
     private String peso;
     private String altura;
+    
     
     
 	public String getNombre() {
@@ -52,6 +55,10 @@ public class Pacientes {
 	}
 	public void setAltura(String altura) {
 		this.altura = altura;
+	}
+	public static void setItems(Collection<Pacientes> listadoPuestos) {
+		// TODO Auto-generated method stub
+		
 	}
 
    

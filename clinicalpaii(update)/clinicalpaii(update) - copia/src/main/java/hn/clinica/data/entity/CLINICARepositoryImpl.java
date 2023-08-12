@@ -1,4 +1,4 @@
-package hn.clinica.data.entity;
+	package hn.clinica.data.entity;
 
 import java.io.IOException;
 
@@ -121,5 +121,18 @@ public class CLINICARepositoryImpl {
 				
 			}
 	}
+		
+		// METODO PARA CONSULTAR LA TABLA CONSULTAS DE BASE DE DATOS EN VIEW CONSULTAS
+		public ResponseConsulta getConsulta() throws IOException {
+			Call<ResponseConsulta> call = client.getDataService().obtenerConsulta();
+			Response<ResponseConsulta> response = call.execute(); // AQUI ES DONDE SE CONSULTA A LA URL DE LA BASE DE DATOS.
+			if (response.isSuccessful()) {
+				return response.body();
+			} else {
+				return null;
+
+			}
+		}
+
 		
 }
