@@ -3,16 +3,17 @@
 import com.vaadin.flow.component.UI;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -26,22 +27,19 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouteAlias;
 import hn.clinica.data.controller.PacientesInteractor;
 import hn.clinica.data.controller.PacientesInteractorImpl;
-import hn.clinica.data.entity.Citas;
 import hn.clinica.data.entity.Pacientes;
+import hn.clinica.data.entity.PacientesDataReport;
+import hn.clinica.data.service.ReportGenerator;
 import hn.clinica.views.MainLayout;
-import net.sf.jasperreports.compilers.JavaScriptCallableThisDecorator;
-
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
-import javax.swing.JComboBox;
-
-import org.hibernate.jdbc.BatchedTooManyRowsAffectedException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import java.awt.Event;
 import java.util.ArrayList;
-import com.vaadin.flow.component.select.Select;
 
 
 @PageTitle("Pacientes")
@@ -96,6 +94,9 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         
         
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        
+        
+        
 
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
@@ -129,8 +130,20 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         	this.controlador.eliminarPaciente(event.getItem().get().getIdentidad());
         	});
         	dialog.open();
-        	
+        
         });
+        menu.addItem("Reporte", event -> {
+            	generarReportePacientes();
+        	
+        	ProgressBar progressBar = new ProgressBar();
+        	progressBar.setIndeterminate(false);
+            
+            getStyle().set("color", "var(--lumo-secondary-text-color)");
+
+            add( progressBar);
+            }); 
+        
+        
         
 
         btnEliminar.addClickListener(e -> {
@@ -210,7 +223,35 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     }
     
 
-    @Override
+   
+    private void generarReportePacientes() {
+    	ReportGenerator generador = new ReportGenerator(); 
+		Map<String, Object> parametros = new HashMap<>();
+		parametros.put("LOGO_DIR", "logodir.png");
+		parametros.put("TEXT", "CLINICAIPAII");
+		PacientesDataReport datasource = new PacientesDataReport();
+		datasource.setData(pacientes);
+		boolean generado = generador.generarReportePDF("Reporte_Pacientes", parametros, datasource);
+	    if(generado) {
+	    	String ubicacion = generador.getUbicacion();
+	    	Anchor url = new Anchor(ubicacion, "GENERAR REPORTE");
+			url.setTarget("_Blank");
+			Notification notificacion = new Notification(url);	
+			notificacion.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+			notificacion.setDuration(20000);
+			notificacion.open();
+			refrescarGridPacientes(pacientes);
+		}else {
+			Notification notificacion = new Notification("Ocurrió un problema al generar el reporte");
+			notificacion.addThemeVariants(NotificationVariant.LUMO_ERROR);
+			notificacion.setDuration(10000);
+			notificacion.open();
+	    }
+	}
+    
+    
+
+	@Override
     
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<String> pacientesId = event.getRouteParameters().get(PACIENTES_ID);
