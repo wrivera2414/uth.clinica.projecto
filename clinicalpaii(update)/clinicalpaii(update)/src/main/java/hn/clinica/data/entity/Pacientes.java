@@ -56,12 +56,9 @@ public class Pacientes {
 	public void setAltura(String altura) {
 		this.altura = altura;
 	}
-	public static void setItems(Collection<Pacientes> listadoPuestos) {
+	public static void setItems(Collection<Pacientes> listadopacientes) {
 		// TODO Auto-generated method stub
 		
 	}
-
-   
-	
 
 }

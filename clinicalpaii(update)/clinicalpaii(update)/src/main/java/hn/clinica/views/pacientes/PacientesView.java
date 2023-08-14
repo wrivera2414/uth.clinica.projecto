@@ -15,6 +15,7 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -28,15 +29,20 @@ import hn.clinica.data.controller.PacientesInteractorImpl;
 import hn.clinica.data.entity.Citas;
 import hn.clinica.data.entity.Pacientes;
 import hn.clinica.views.MainLayout;
+import net.sf.jasperreports.compilers.JavaScriptCallableThisDecorator;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.JComboBox;
+
 import org.hibernate.jdbc.BatchedTooManyRowsAffectedException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
-import java.awt.Event;
 import java.util.ArrayList;
+import com.vaadin.flow.component.select.Select;
+
 
 @PageTitle("Pacientes")
 @Route(value = "pacientes/:pacientesID?/:action?(edit)", layout = MainLayout.class)
@@ -53,11 +59,10 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     private TextField peso;
     private TextField altura;
     private TextField sangre;
-
     private List<Pacientes> pacientes;
-    
 
-    private final Button cancel = new Button("Cancelar");
+
+    private final Button cancel = new Button("Limpiar");
     private final Button save = new Button("Guardar");
     private final Button btnEliminar = new Button("Eliminar");
 
@@ -96,7 +101,6 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
                 UI.getCurrent().navigate(String.format(PACIENTES_EDIT_ROUTE_TEMPLATE, event.getValue().getIdentidad()));
-                identidad.setReadOnly(true);
             } else {
                 clearForm();
                 UI.getCurrent().navigate(PacientesView.class);
@@ -160,7 +164,6 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         
      
         save.addClickListener(e -> {
-        	
             try {
             	
                 if (this.paciente == null)
@@ -170,31 +173,30 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
                     	this.paciente.setIdentidad(this.identidad.getValue());
                     	this.paciente.setNombre(this.nombre.getValue());
                     	this.paciente.setTelefono(this.telefono.getValue());
-                    	this.paciente.setSangre(this.sangre.getValue().toString());	 
+                    	this.paciente.setSangre(this.sangre.getValue());
                     	this.paciente.setEdad(this.edad.getValue());
                     	this.paciente.setPeso(this.peso.getValue());
                     	this.paciente.setAltura(this.altura.getValue());
                     	this.controlador.crearPacientes(paciente);
-                		
+
                 	} else 
                 	{
                 		this.paciente.setIdentidad(this.identidad.getValue());
                 		this.paciente.setNombre(this.nombre.getValue());
                         this.paciente.setTelefono(this.telefono.getValue());
-                  	    this.paciente.setSangre(this.sangre.getValue());	 
+                  	    this.paciente.setSangre(this.sangre.getValue().toString());	 
                         this.paciente.setEdad(this.edad.getValue());
                         this.paciente.setPeso(this.peso.getValue());
                         this.paciente.setAltura(this.altura.getValue());
                       	this.controlador.modificarPacientes(paciente);
+
 					}
      
           
-                
-                clearForm();
                 refreshGrid();
+                clearForm();
                 UI.getCurrent().navigate(PacientesView.class);
-                
-                
+
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
                         "Error al almacenar informacion por favor revise su conexion o intente nuevamente");
@@ -247,24 +249,28 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 
         FormLayout formLayout = new FormLayout();
         nombre = new TextField("Nombre");
+        nombre.setClearButtonVisible(true);
+        nombre.setPrefixComponent(VaadinIcon.USER_CARD.create());
+        
         identidad = new TextField("Identidad");
         identidad.setSuffixComponent(new Span("DNI"));
+        identidad.setPrefixComponent(VaadinIcon.USER_CHECK.create());
         telefono = new TextField("Telefono");
         telefono.setPrefixComponent(new Span("+504"));
         edad = new TextField("Edad");
         edad.setSuffixComponent(new Span("Años"));
         sangre = new TextField("Sangre");
+        
+      
+        
         peso = new TextField("Peso");
         peso.setSuffixComponent(new Span("Lbs"));
 
         
         altura = new TextField("Altura");
         altura.setSuffixComponent(new Span("Cm"));
-        
-       
+    
 
-        
-        
         //Agregar Componentes al Layout
         formLayout.add(nombre, identidad,telefono,sangre, edad, peso, altura);
 
@@ -273,8 +279,6 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 
         splitLayout.addToSecondary(editorLayoutDiv);
     }
-    
-
 
 	private void createButtonLayout(Div editorLayoutDiv) {
 		
@@ -306,7 +310,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     }
 
     private void populateForm(Pacientes value) {
-    	    	
+    	this.paciente = value;
     	if(value == null) 
     	{	
     		this.nombre.setValue("");	

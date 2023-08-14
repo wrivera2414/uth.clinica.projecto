@@ -63,15 +63,9 @@ public class CLINICARepositoryImpl {
 	
 	//METODO PARA CREACION DE PACIENTE VIEW PACIENTES
 	public boolean createPaciente(Pacientes nuevo) throws IOException{
-		
-		
 		Call <ResponseBody> call = client.getDataService().crearPaciente(nuevo);
 		Response<ResponseBody> response = call.execute(); // AQUI ES DONDE SE CONSULTA A LA URL DE LA BASE DE DATOS.
-		
-		
-			return response.isSuccessful();
-
-			
+			return response.isSuccessful();		
 	}
 	
 	//METODO PARA MODIFICAR PACIENTES DE BASE DE DATOS EN VIEW PACIENTES
