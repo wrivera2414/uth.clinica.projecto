@@ -7,4 +7,5 @@ public interface CitasInteractor {
 	void crearNuevaCitas(Citas nuevo);
 	void actualizarCitas(Citas actualizar );
 	void eliminarCitas(String idcita);
+	void consultarPacientes();
 }

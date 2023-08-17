@@ -1,9 +1,5 @@
 package hn.clinica.data.entity;
 
-import java.util.List;
-
-
-
 public class Citas {
 
     private String idcita;

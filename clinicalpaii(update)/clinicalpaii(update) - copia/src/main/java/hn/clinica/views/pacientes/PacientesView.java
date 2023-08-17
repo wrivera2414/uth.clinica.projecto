@@ -1,19 +1,22 @@
  package hn.clinica.views.pacientes;
 
-import com.github.javaparser.ast.expr.ThisExpr;
 import com.vaadin.flow.component.UI;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -22,17 +25,22 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouteAlias;
-
 import hn.clinica.data.controller.PacientesInteractor;
 import hn.clinica.data.controller.PacientesInteractorImpl;
 import hn.clinica.data.entity.Pacientes;
+import hn.clinica.data.entity.PacientesDataReport;
+import hn.clinica.data.service.ReportGenerator;
 import hn.clinica.views.MainLayout;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+
+import java.awt.Event;
 import java.util.ArrayList;
+
 
 @PageTitle("Pacientes")
 @Route(value = "pacientes/:pacientesID?/:action?(edit)", layout = MainLayout.class)
@@ -49,16 +57,21 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     private TextField peso;
     private TextField altura;
     private TextField sangre;
-
     private List<Pacientes> pacientes;
-    
 
-    private final Button cancel = new Button("Cancelar");
+
+    private final Button cancel = new Button("Limpiar");
     private final Button save = new Button("Guardar");
+    private final Button btnEliminar = new Button("Eliminar");
+
     private Pacientes paciente;
     private PacientesInteractor controlador;
 
-    public PacientesView() {
+    @SuppressWarnings("unlikely-arg-type")
+    //CONTRUCTOR VIEW PACIENTES
+	public PacientesView() {
+    	
+    	
         addClassNames("pacientes-view");
         pacientes = new ArrayList<>();
         this.controlador = new PacientesInteractorImpl(this);
@@ -80,13 +93,10 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         grid.addColumn("altura").setAutoWidth(true);  
         
         
-        
-        /*grid.setItems(query -> pacientesService.list(
-                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
-                .stream());*/
-        
-        
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        
+        
+        
 
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
@@ -101,54 +111,147 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         //mando a traer los pacientes del repositorio
         this.controlador.consultarPacientes();
 
+        
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        GridContextMenu<Pacientes> menu = grid.addContextMenu();
+        menu.addItem("Eliminar", event -> {
+         	ConfirmDialog dialog = new ConfirmDialog();
+        	dialog.setHeader("Eliminar Paciente de "+event.getItem().get().getIdentidad());
+        	dialog.setText("Confirma que deseas eliminar El paciente!");
+        	dialog.setCancelable(true);
+        	dialog.setCancelText("Cancelar");
+        	dialog.setCancelButtonTheme("cancel primary");
+        	dialog.addCancelListener(event2 -> {
+             refreshGrid();	
+        	});
+        	dialog.setConfirmText("Eliminar");
+        	dialog.setConfirmButtonTheme("error primary");
+        	dialog.addConfirmListener(event3 -> {
+        	this.controlador.eliminarPaciente(event.getItem().get().getIdentidad());
+        	});
+        	dialog.open();
+        
+        });
+        menu.addItem("Reporte", event -> {
+            	generarReportePacientes();
+        	
+        	ProgressBar progressBar = new ProgressBar();
+        	progressBar.setIndeterminate(false);
+            
+            getStyle().set("color", "var(--lumo-secondary-text-color)");
+
+            add( progressBar);
+            }); 
+        
+        
+        
+
+        btnEliminar.addClickListener(e -> {
+        	
+        	try {
+        	 if (this.paciente == null)
+             {    
+             	String mensajeerror= "CAMPO VACIO";
+             		Notification.show(mensajeerror);
+             	} else 
+             	{
+             		this.controlador.eliminarPaciente(this.paciente.getIdentidad());
+             	
+				
+             	}
+        	 
+        	} catch (ObjectOptimisticLockingFailureException Exception) {
+        		  Notification n = Notification.show(
+                          "Error al Eliminar informacion por favor revise su conexion o intente nuevamente");
+                  n.setPosition(Position.MIDDLE);
+                  n.addThemeVariants(NotificationVariant.LUMO_ERROR);			}
+        });
+        
+        
+
         cancel.addClickListener(e -> {
             clearForm();
             refreshGrid();
         });
-
+      
+        
+     
         save.addClickListener(e -> {
-        	
             try {
-                String MensajeExito = "Registro Guardado!";
+            	
+                if (this.paciente == null)
+                {    
+                	//CREANDO REGISTROS PANTALLA PACIENTES
+                    	this.paciente = new Pacientes();
+                    	this.paciente.setIdentidad(this.identidad.getValue());
+                    	this.paciente.setNombre(this.nombre.getValue());
+                    	this.paciente.setTelefono(this.telefono.getValue());
+                    	this.paciente.setSangre(this.sangre.getValue());
+                    	this.paciente.setEdad(this.edad.getValue());
+                    	this.paciente.setPeso(this.peso.getValue());
+                    	this.paciente.setAltura(this.altura.getValue());
+                    	this.controlador.crearPacientes(paciente);
 
-                if (this.paciente == null) {    
-               
-                   this.paciente = new Pacientes();
-                   this.paciente.setIdentidad(this.identidad.getValue());
-                   this.paciente.setNombre(this.nombre.getValue());
-                   this.paciente.setTelefono(this.telefono.getValue());
-           	       this.paciente.setSangre(this.sangre.getValue());	 
-                   this.paciente.setEdad(this.edad.getValue());
-                   this.paciente.setPeso(this.peso.getValue());
-                   this.paciente.setAltura(this.altura.getValue());
-                   this.controlador.crearPacientes(paciente);
-                   
-                   
-                   
-                } else 
-                {
-                	//this.controlador.modificarPacientes(paciente);
-                	 Notification n = Notification.show(
-                             "Eerror al almacenar informacion por favor revise su conexion o intente nuevamente");
-                	 n.setPosition(Position.MIDDLE);
-                     n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                     
-                }
-                clearForm();
+                	} else 
+                	{
+                		this.paciente.setIdentidad(this.identidad.getValue());
+                		this.paciente.setNombre(this.nombre.getValue());
+                        this.paciente.setTelefono(this.telefono.getValue());
+                  	    this.paciente.setSangre(this.sangre.getValue().toString());	 
+                        this.paciente.setEdad(this.edad.getValue());
+                        this.paciente.setPeso(this.peso.getValue());
+                        this.paciente.setAltura(this.altura.getValue());
+                      	this.controlador.modificarPacientes(paciente);
+
+					}
+     
+          
                 refreshGrid();
-                this.paciente = null;
-                
+                clearForm();
                 UI.getCurrent().navigate(PacientesView.class);
+
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
-                        "Eerror al almacenar informacion por favor revise su conexion o intente nuevamente");
+                        "Error al almacenar informacion por favor revise su conexion o intente nuevamente");
                 n.setPosition(Position.MIDDLE);
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }});
+        }
+
+        });
+        
+      
     }
     
 
-    @Override
+   
+    private void generarReportePacientes() {
+    	ReportGenerator generador = new ReportGenerator(); 
+		Map<String, Object> parametros = new HashMap<>();
+		parametros.put("LOGO_DIR", "logodir.png");
+		parametros.put("TEXT", "CLINICAIPAII");
+		PacientesDataReport datasource = new PacientesDataReport();
+		datasource.setData(pacientes);
+		boolean generado = generador.generarReportePDF("Reporte_Pacientes", parametros, datasource);
+	    if(generado) {
+	    	String ubicacion = generador.getUbicacion();
+	    	Anchor url = new Anchor(ubicacion, "GENERAR REPORTE");
+			url.setTarget("_Blank");
+			Notification notificacion = new Notification(url);	
+			notificacion.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+			notificacion.setDuration(20000);
+			notificacion.open();
+			refrescarGridPacientes(pacientes);
+		}else {
+			Notification notificacion = new Notification("Ocurrió un problema al generar el reporte");
+			notificacion.addThemeVariants(NotificationVariant.LUMO_ERROR);
+			notificacion.setDuration(10000);
+			notificacion.open();
+	    }
+	}
+    
+    
+
+	@Override
     
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<String> pacientesId = event.getRouteParameters().get(PACIENTES_ID);
@@ -187,21 +290,28 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 
         FormLayout formLayout = new FormLayout();
         nombre = new TextField("Nombre");
+        nombre.setClearButtonVisible(true);
+        nombre.setPrefixComponent(VaadinIcon.USER_CARD.create());
+        
         identidad = new TextField("Identidad");
+        identidad.setSuffixComponent(new Span("DNI"));
+        identidad.setPrefixComponent(VaadinIcon.USER_CHECK.create());
         telefono = new TextField("Telefono");
         telefono.setPrefixComponent(new Span("+504"));
         edad = new TextField("Edad");
         edad.setSuffixComponent(new Span("Años"));
         sangre = new TextField("Sangre");
-
+        
+      
+        
         peso = new TextField("Peso");
         peso.setSuffixComponent(new Span("Lbs"));
 
         
         altura = new TextField("Altura");
         altura.setSuffixComponent(new Span("Cm"));
-        
-        
+    
+
         //Agregar Componentes al Layout
         formLayout.add(nombre, identidad,telefono,sangre, edad, peso, altura);
 
@@ -211,13 +321,15 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         splitLayout.addToSecondary(editorLayoutDiv);
     }
 
-
 	private void createButtonLayout(Div editorLayoutDiv) {
+		
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel);
+        btnEliminar.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                ButtonVariant.LUMO_ERROR);
+        buttonLayout.add(save, cancel, btnEliminar);
         editorLayoutDiv.add(buttonLayout);
     }
 
@@ -239,7 +351,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     }
 
     private void populateForm(Pacientes value) {
-    	    	
+    	this.paciente = value;
     	if(value == null) 
     	{	
     		this.nombre.setValue("");	
@@ -256,7 +368,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
     	    this.identidad.setValue(value.getIdentidad());	
     	    this.telefono.setValue(value.getTelefono());	
     	    this.edad.setValue(value.getEdad());
-    	    this.sangre.setValue(value.getSangre());	 
+    	    this.sangre.setValue(value.getSangre());
     	    this.peso.setValue(value.getPeso());	
     	    this.altura.setValue(value.getAltura());	
     	
@@ -277,7 +389,7 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
 	@Override
 	public void mostrarMensajeCreacion(boolean Exito) {
 		
-        String MensajeExito = "Registro Guardado!";
+        String MensajeExito = "Registro Creado Con Exito!";
         
 		if(!Exito) 
 		{
@@ -288,6 +400,32 @@ public class PacientesView extends Div implements BeforeEnterObserver, Pacientes
         Notification.show(MensajeExito);
 
 		
+	}
+
+
+	@Override
+	public void mostrarMensajeActualizacionPacientes(boolean exito) {
+		String mesajeMotrar = "Registro actualizado con exito";
+	    if(!exito) {
+	  	  mesajeMotrar = "Registro no pudo ser actualizado";
+	    }
+	    
+	    Notification.show(mesajeMotrar);
+		
+	}
+
+
+	@Override
+	public void mostrarMensajeEliminacionPacientes(boolean exito) {
+		String EliminarPaciente = "Registro Eliminado con exito";
+		refreshGrid();
+
+	    if(!exito) {
+	    	EliminarPaciente = "Registro no pudo ser Eliminado";
+	    }
+	    
+	    Notification.show(EliminarPaciente);
+				
 	}
 }
  

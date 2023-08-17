@@ -67,6 +67,17 @@ public class CitasInteractorImpl implements CitasInteractor {
 		}
 		
 	}
+	@Override
+	public void consultarPacientes() {
+		try {
+			ResponsePacientes respuesta = this.modelo.getPacientes();
+			this.vista.refrescarComboPacientes(respuesta.getItems());
+			
+		} catch (IOException e){
+			e.printStackTrace();
+		} 
+	}
+
 	
 
 }

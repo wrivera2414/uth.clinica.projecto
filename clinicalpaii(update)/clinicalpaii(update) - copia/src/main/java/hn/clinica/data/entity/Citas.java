@@ -8,7 +8,7 @@ public class Citas {
     private String paciente;
     private String direccion;
     private String telefono;
-    private String detalle;
+    private String detalle;    
 
     public String getIdcita() {
         return idcita;

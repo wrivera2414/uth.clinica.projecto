@@ -9,6 +9,8 @@
 	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
 	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
 	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<parameter name="NOMBRE_LOGO" class="java.lang.String"/>
+	<parameter name="LOGO_DIR" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -23,11 +25,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="70" splitType="Stretch">
-			<image>
-				<reportElement x="275" y="0" width="300" height="64" uuid="363fa2ad-70fc-43cb-9062-e6c62c7f48fc"/>
-				<imageExpression><![CDATA["leaf_banner_gray.png"]]></imageExpression>
-			</image>
+		<band height="88" splitType="Stretch">
 			<staticText>
 				<reportElement style="Title" x="0" y="13" width="263" height="33" uuid="6f9c1004-6140-4588-9c4f-d75824835765"/>
 				<textElement verticalAlignment="Middle"/>
@@ -37,6 +35,34 @@
 				<reportElement style="SubTitle" x="3" y="46" width="227" height="22" uuid="8e16dabd-2e54-471b-9652-83e1d55379ec"/>
 				<text><![CDATA[Reporte Agenda Citas]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="450" y="70" width="108" height="18" forecolor="#0E027A" uuid="84be67fc-f56f-42aa-8ed3-97e9e11f1fcd"/>
+				<textElement textAlignment="Center">
+					<font isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOMBRE_LOGO}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="88" backcolor="#006699" uuid="96c9565b-f330-40db-a319-f9cc651500a8"/>
+				<staticText>
+					<reportElement x="17" y="12" width="330" height="43" forecolor="#FFFFFF" uuid="e4737afd-41a1-4855-853e-9c42d183a553"/>
+					<textElement>
+						<font size="34" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SISTEMA CLINICA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="17" y="56" width="150" height="20" forecolor="#FFFFFF" uuid="f7258dd4-97aa-461e-bbea-3170eeb6a5ee"/>
+					<textElement textAlignment="Right">
+						<font size="14" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Reporte Agendas Citas]]></text>
+				</staticText>
+				<image scaleImage="FillFrame">
+					<reportElement x="477" y="4" width="94" height="78" uuid="132375bb-3a07-41dc-b75e-9e4b293ffe22"/>
+					<imageExpression><![CDATA[$P{LOGO_DIR}]]></imageExpression>
+				</image>
+			</frame>
 		</band>
 	</title>
 	<pageHeader>
@@ -81,7 +107,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="75" splitType="Stretch">
+		<band height="41" splitType="Stretch">
 			<line>
 				<reportElement positionType="FixRelativeToBottom" x="3" y="-2" width="555" height="1" uuid="401e0e59-de38-4dd2-8257-418cb489177c"/>
 				<graphicElement>
@@ -101,11 +127,11 @@
 				<textFieldExpression><![CDATA[$F{IDENTIDAD}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="174" y="5" width="80" height="45" uuid="86237b72-7859-4756-a69b-07375985e490"/>
+				<reportElement x="174" y="5" width="80" height="28" uuid="86237b72-7859-4756-a69b-07375985e490"/>
 				<textFieldExpression><![CDATA[$F{PACIENTE}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="255" y="5" width="79" height="45" uuid="1030a6cb-9094-4b2b-9db0-9e746edf4a95"/>
+				<reportElement x="255" y="5" width="79" height="28" uuid="1030a6cb-9094-4b2b-9db0-9e746edf4a95"/>
 				<textFieldExpression><![CDATA[$F{DIRECCION}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -113,7 +139,7 @@
 				<textFieldExpression><![CDATA[$F{TELEFONO}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="398" y="4" width="162" height="56" uuid="723e5de9-e512-4018-a4b1-6d0741dfdff4"/>
+				<reportElement x="398" y="4" width="162" height="29" uuid="723e5de9-e512-4018-a4b1-6d0741dfdff4"/>
 				<textFieldExpression><![CDATA[$F{DETALLE}]]></textFieldExpression>
 			</textField>
 		</band>

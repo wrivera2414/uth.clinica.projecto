@@ -2,7 +2,10 @@ package hn.clinica.data.controller;
 
 import java.io.IOException;
 
+import org.hibernate.internal.util.type.PrimitiveWrapperHelper.BooleanDescriptor;
+
 import hn.clinica.data.entity.CLINICARepositoryImpl;
+import hn.clinica.data.entity.Consulta;
 import hn.clinica.data.entity.Pacientes;
 import hn.clinica.data.entity.ResponseCitas;
 import hn.clinica.data.entity.ResponseConsulta;
@@ -41,4 +44,24 @@ public class ConsultaInteractorImpl implements ConsultaInteractor {
 
 	}
 */
+
+	@Override
+	public void actualizarConsulta(Consulta actualizada) {
+		try {
+			boolean respuesta = this.modelo.updateConsulta(actualizada);
+			this.vista.mostrarMensajeActualizacion(respuesta);
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void consultarMedicamentos() {
+		try {
+			ResponseMedicamento respuesta = this.modelo.getMedicamento();
+			this.vista.refrescarConsultaMedicamentos(respuesta.getItems());
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

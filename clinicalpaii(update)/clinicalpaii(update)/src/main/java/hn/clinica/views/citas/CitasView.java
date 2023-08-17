@@ -1,4 +1,5 @@
 package hn.clinica.views.citas;
+
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -26,7 +27,6 @@ import com.vaadin.flow.router.Route;
 import java.util.Collection;
 import hn.clinica.data.controller.CitasInteractor;
 import hn.clinica.data.controller.CitasInteractorImpl;
-import hn.clinica.data.controller.PacientesInteractor;
 import hn.clinica.data.entity.Citas;
 import hn.clinica.data.entity.CitasDataReport;
 import hn.clinica.data.entity.Pacientes;
@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.HashMap;
 
-
+import org.hibernate.bytecode.internal.bytebuddy.PrivateAccessorException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Citas")
@@ -60,7 +60,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     private TextField telefono;
     private TextArea detalle;
     private List<Citas> cita;
-    private ComboBox<Pacientes> pacientes;
+    private ComboBox<Pacientes> clientes;
+    //private List<Pacientes> pacientes;
     
     
 
@@ -165,6 +166,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 
    
         this.controlador.consultarCitas();
+        this.controlador.consultarPacientes();
 
         save.addClickListener(e -> {
             try {
@@ -219,6 +221,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 	private void generarReporteCitas() {
 		ReportGenerator generador = new ReportGenerator(); 
 		Map<String, Object> parametros = new HashMap<>();
+		parametros.put("NOMBRE_LOGO", "GRUPO N.3");
+		parametros.put("LOGO_DIR", "hospital.jpg");
 		CitasDataReport datasource = new CitasDataReport();
 		datasource.setData(cita);
 		boolean generado = generador.generarReportePDF("reporte_citas2", parametros, datasource);
@@ -325,10 +329,15 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         });
         
         
-        pacientes = new ComboBox<>("Pacientes");
-        pacientes.setItemLabelGenerator(Pacientes::getNombre);       
+        
+        
+        clientes = new ComboBox<>("clientes");
+        //Collection<Pacientes> listadoClientes = generarClientes();
+		//clientes.setItems(listadoClientes );
+        clientes.setItemLabelGenerator(Pacientes::getNombre);   
+      // controlador.consultarPacientes();
         //detalle.setValue("Detalle de la cita");
-        formLayout.add(idcita, fecha, identidad, paciente, direccion, telefono, detalle, pacientes);
+        formLayout.add(idcita, fecha, identidad, paciente, direccion, telefono, detalle, clientes);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv); 
@@ -336,7 +345,22 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         splitLayout.addToSecondary(editorLayoutDiv);
     }
 
-    private void createButtonLayout(Div editorLayoutDiv) {
+    private Collection<Pacientes> generarClientes() {
+		List<Pacientes> listado = new ArrayList<>();
+		Pacientes prueba1 = new Pacientes();
+		prueba1.setNombre("paciente1");
+		Pacientes prueba2 = new Pacientes();
+		prueba2.setNombre("paciente2");
+		Pacientes prueba3 = new Pacientes();
+		prueba3.setNombre("paciente3");
+		listado.add(prueba1);
+		listado.add(prueba2);
+		listado.add(prueba3);
+		return listado;
+	}
+
+
+	private void createButtonLayout(Div editorLayoutDiv) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
        // save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -373,7 +397,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         	this.direccion.setValue("");
         	this.telefono.setValue("");
         	this.detalle.setValue("");
-        	this.pacientes.setValue(null);
+        	this.clientes.setValue(null);
+        	//this.pacientes.setValue(null);
         	} 
         else {
         	//DateTimePicker fechastr = ;
@@ -384,13 +409,25 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         	this.direccion.setValue(value.getDireccion());
         	this.telefono.setValue(value.getTelefono());
         	this.detalle.setValue(value.getDetalle());
+        	this.clientes.setValue(null);
+        	//this.Pacient.setValue(buscarNpacientesSeleccionado(value.getNombre()));
         	//this.pacientes.setVisible(value.getPaciente());
         }
     }
     
     
+   /* private Pacientes buscarNpacientesSeleccionado(String pacientes) {
+		Pacientes seleccionado = new Pacientes();
+		for (Pacientes p : pacientes) {
+			if(p.getNombre() == pacientes) {
+				seleccionado = p;
+				break;
+			}
+		}
+		return seleccionado;
+	}*/
     
-    
+  
     
    @Override
 	public void refrescarGridCitas(List<Citas> cita) {
@@ -438,18 +475,18 @@ public void mostrarMensajeEliminacion(boolean exito) {
     
     Notification.show(mesajeMotrar);
 
-	
+	 
 }
-
+ 
 
 @Override
 public void refrescarComboPacientes(List<Pacientes> pacientes) {
-	Collection<Pacientes> listadopacientes = pacientes;
-	Pacientes.setItems(listadopacientes);
+	Collection<Pacientes> listadoClientes = pacientes;
+	clientes.setItems(listadoClientes );
+	//this.pacientes = pacientes;
+    
+
 }
-
-
-
 
 
 

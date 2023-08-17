@@ -54,7 +54,8 @@ public class ReportGenerator {
 	}
 
 	public String getUbicacion() {
-		return ubicacion;	
+		return ubicacion;
 	}
-	
+
+
 }

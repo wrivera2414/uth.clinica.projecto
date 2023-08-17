@@ -1,6 +1,8 @@
 package hn.clinica.data.service;
 
 import hn.clinica.data.entity.Citas;
+import hn.clinica.data.entity.Consulta;
+import hn.clinica.data.entity.Medicamentos;
 import hn.clinica.data.entity.Pacientes;
 import hn.clinica.data.entity.ResponseCitas;
 import hn.clinica.data.entity.ResponseConsulta;
@@ -38,6 +40,25 @@ public interface CLINICARepository {
 	Call<ResponseBody> crearPaciente(@Body Pacientes nuevo);
 
 	
+	// METODO MODIFIAR PACIENTES
+		@Headers({
+		    "Content-Type: application/json",
+		    "Accept-Charset: utf-8",
+		    "User-Agent: Retrofit-Sample-App"
+		})
+		@PUT("/pls/apex/wencellr_pav2_98_2/clinica/pacientes/")
+		Call<ResponseBody> modificarPacientes(@Body Pacientes actualizar );
+		
+		
+		//METODO ELIMINAR PACIENTES
+		@Headers({
+		    "Accept-Charset: utf-8",
+		    "User-Agent: Retrofit-Sample-App"
+		})
+		@DELETE("/pls/apex/wencellr_pav2_98_2/clinica/pacientes/")
+		Call<ResponseBody> eliminarPaciente(@Query("id") String identidad);
+		
+	
 	// METODO CONSULTA CITA
 	@Headers({
 	    "Content-Type: application/json",
@@ -46,6 +67,7 @@ public interface CLINICARepository {
 	})
 	@GET("/pls/apex/wencellr_pav2_98_2/clinica/citas/")
 	Call<ResponseCitas> obtenerCitas();
+
 	
 	// METODO CREAR CITA
 	@Headers({
@@ -74,16 +96,27 @@ public interface CLINICARepository {
 	 Call<ResponseBody> eliminarCitas(@Query("id") String idcita);
 	
 	
+
 	@Headers({
 	    "Content-Type: application/json",
 	    "Accept-Charset: utf-8",
 	    "User-Agent: Retrofit-Sample-App"
 	})
-	
-	@GET("pls/apex/wencellr_pav2_98_2/clinica/medicamentos/")
+	@GET("pls/apex/wencellr_pav2_98_2/clinica/medicamentos")
 	Call<ResponseMedicamento> obtenerMedicamentos();
-	
-	
+	@Headers({
+		"Content-Type: application/json",
+		"Accept-Charset: utf-8",
+		"User-Agent: Retrofit-Sample-App"
+	})
+	@POST("pls/apex/wencellr_pav2_98_2/clinica/medicamentos")
+	Call<ResponseBody> crearMedicamento(@Body Medicamentos medicamento);
+	@Headers({
+		"Accept-Charset: utf-8",
+		"User-Agent: Retrofit-Sample-App"
+	})
+	@DELETE("pls/apex/wencellr_pav2_98_2/clinica/medicamentos")
+	Call<ResponseBody> eliminarMedicamento(@Query("codigo") String idMed);	
 	@Headers({
 	    "Content-Type: application/json",
 	    "Accept-Charset: utf-8",
@@ -92,8 +125,11 @@ public interface CLINICARepository {
 	
 	@GET("pls/apex/wencellr_pav2_98_2/clinica/Consulta/")
 	Call<ResponseConsulta> obtenerConsulta();
-
-	
-	
-		
+	@Headers({
+		"Content-Type: application/json",
+		"Accept-Charset: utf-8",
+		"User-Agent: Retrofit-Sample-App"
+	})
+	@PUT("pls/apex/wencellr_pav2_98_2/clinica/Consulta/")
+	Call<ResponseBody> actualizarConsulta(@Body Consulta actualizada);
 }

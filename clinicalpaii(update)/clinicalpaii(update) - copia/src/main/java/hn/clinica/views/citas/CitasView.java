@@ -1,7 +1,9 @@
 package hn.clinica.views.citas;
+
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -27,6 +29,7 @@ import hn.clinica.data.controller.CitasInteractor;
 import hn.clinica.data.controller.CitasInteractorImpl;
 import hn.clinica.data.entity.Citas;
 import hn.clinica.data.entity.CitasDataReport;
+import hn.clinica.data.entity.Pacientes;
 import hn.clinica.data.service.ReportGenerator;
 import hn.clinica.views.MainLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
@@ -38,7 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.HashMap;
 
-
+import org.hibernate.bytecode.internal.bytebuddy.PrivateAccessorException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Citas")
@@ -57,6 +60,10 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
     private TextField telefono;
     private TextArea detalle;
     private List<Citas> cita;
+    private ComboBox<Pacientes> clientes;
+    //private List<Pacientes> pacientes;
+    
+    
 
     private final Button save = new Button("Guardar");
     private final Button cancel = new Button("Cancelar");
@@ -157,20 +164,13 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
             }
         });
 
-        // Configure Form
-       // binder = new BeanValidationBinder<>(Citas.class);
-
-        // Bind fields. This is where you'd define e.g. validation rules
-        //binder.forField(idcita).withConverter(new StringToIntegerConverter("Unicamente son permitidos Numeros")).bind("idcita");
-
-        //binder.bindInstanceFields(this);
-        
+   
         this.controlador.consultarCitas();
+        this.controlador.consultarPacientes();
 
         save.addClickListener(e -> {
             try {
             	
-            	String MensajeExito = "Registro Guardado!";
                 if (this.citas == null) {
                     //CEANDO REGISTRO 
                 	this.citas = new Citas();
@@ -182,7 +182,6 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 	this.citas.setDireccion(this.direccion.getValue());
                 	this.citas.setDetalle(this.detalle.getValue());
                 	this.controlador.crearNuevaCitas(citas);  
-                    //this.controlador.consultarCitas();
 
                 }else {
                     //MODIFICANDO REGISTRO
@@ -195,6 +194,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
                 	this.citas.setDetalle(this.detalle.getValue());
                 	this.controlador.actualizarCitas(citas);
                 }
+                
                 clearForm();
                 refreshGrid();
                 UI.getCurrent().navigate(CitasView.class);
@@ -206,6 +206,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
             } 
             
         });
+        
+        
         
         cancel.addClickListener(e -> {
             clearForm();
@@ -219,6 +221,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
 	private void generarReporteCitas() {
 		ReportGenerator generador = new ReportGenerator(); 
 		Map<String, Object> parametros = new HashMap<>();
+		parametros.put("NOMBRE_LOGO", "GRUPO N.3");
+		parametros.put("LOGO_DIR", "hospital.jpg");
 		CitasDataReport datasource = new CitasDataReport();
 		datasource.setData(cita);
 		boolean generado = generador.generarReportePDF("reporte_citas2", parametros, datasource);
@@ -305,7 +309,7 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         identidad.setPlaceholder("Busqueda Paciente");
         identidad.setPrefixComponent(VaadinIcon.BACKSPACE.create());
         paciente = new TextField("Paciente");
-       // paciente.setReadOnly(true);
+        // paciente.setReadOnly(true);
         paciente.setPrefixComponent(VaadinIcon.USER.create());
         direccion = new TextField("Direccion");
         //direccion.setReadOnly(true);
@@ -323,8 +327,17 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
             e.getSource()
                     .setHelperText(e.getValue().length() + "/" + (140));
         });
+        
+        
+        
+        
+        clientes = new ComboBox<>("clientes");
+        //Collection<Pacientes> listadoClientes = generarClientes();
+		//clientes.setItems(listadoClientes );
+        clientes.setItemLabelGenerator(Pacientes::getNombre);   
+      // controlador.consultarPacientes();
         //detalle.setValue("Detalle de la cita");
-        formLayout.add(idcita, fecha, identidad, paciente, direccion, telefono, detalle);
+        formLayout.add(idcita, fecha, identidad, paciente, direccion, telefono, detalle, clientes);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv); 
@@ -332,7 +345,22 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         splitLayout.addToSecondary(editorLayoutDiv);
     }
 
-    private void createButtonLayout(Div editorLayoutDiv) {
+    private Collection<Pacientes> generarClientes() {
+		List<Pacientes> listado = new ArrayList<>();
+		Pacientes prueba1 = new Pacientes();
+		prueba1.setNombre("paciente1");
+		Pacientes prueba2 = new Pacientes();
+		prueba2.setNombre("paciente2");
+		Pacientes prueba3 = new Pacientes();
+		prueba3.setNombre("paciente3");
+		listado.add(prueba1);
+		listado.add(prueba2);
+		listado.add(prueba3);
+		return listado;
+	}
+
+
+	private void createButtonLayout(Div editorLayoutDiv) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
        // save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -369,6 +397,8 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         	this.direccion.setValue("");
         	this.telefono.setValue("");
         	this.detalle.setValue("");
+        	this.clientes.setValue(null);
+        	//this.pacientes.setValue(null);
         	} 
         else {
         	//DateTimePicker fechastr = ;
@@ -379,8 +409,26 @@ public class CitasView extends Div implements BeforeEnterObserver,CitasViewModel
         	this.direccion.setValue(value.getDireccion());
         	this.telefono.setValue(value.getTelefono());
         	this.detalle.setValue(value.getDetalle());
+        	this.clientes.setValue(null);
+        	//this.Pacient.setValue(buscarNpacientesSeleccionado(value.getNombre()));
+        	//this.pacientes.setVisible(value.getPaciente());
         }
     }
+    
+    
+   /* private Pacientes buscarNpacientesSeleccionado(String pacientes) {
+		Pacientes seleccionado = new Pacientes();
+		for (Pacientes p : pacientes) {
+			if(p.getNombre() == pacientes) {
+				seleccionado = p;
+				break;
+			}
+		}
+		return seleccionado;
+	}*/
+    
+  
+    
    @Override
 	public void refrescarGridCitas(List<Citas> cita) {
 		// TODO Auto-generated method stub
@@ -427,6 +475,19 @@ public void mostrarMensajeEliminacion(boolean exito) {
     
     Notification.show(mesajeMotrar);
 
-	
+	 
 }
+ 
+
+@Override
+public void refrescarComboPacientes(List<Pacientes> pacientes) {
+	Collection<Pacientes> listadoClientes = pacientes;
+	clientes.setItems(listadoClientes );
+	//this.pacientes = pacientes;
+    
+
+}
+
+
+
 }
