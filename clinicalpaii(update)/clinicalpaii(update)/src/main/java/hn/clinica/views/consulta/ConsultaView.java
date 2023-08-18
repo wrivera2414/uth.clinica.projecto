@@ -199,22 +199,11 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 		parametros.put("LOGO_BAR", "loguito.png");
 		ConsultaReporte datasource = new ConsultaReporte();
 		datasource.setData(consultas);
-		String generado = generador.generarReportePDF("Reporte_Consulta", parametros, datasource);
-	    if(generado != null) {
-	    	StreamResource resource = new StreamResource("Reporte de Orden Consulta.pdf", () -> {
-                try {
-                    return new FileInputStream(generado);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            });
-	    	
-	    	//String ubicacion = generador.getUbicacion();
-	    	Anchor url = new Anchor(resource, "Abrir reporte PDF");
+		boolean generado = generador.generarReportePDF("Reporte_Consulta", parametros, datasource);
+		if(generado) {
+	    	String ubicacion = generador.getUbicacion();
+	    	Anchor url = new Anchor(ubicacion, "Abrir reporte PDF");
 			url.setTarget("_Blank"); 
-			add(url);
-			
 			Notification notificacion = new Notification(url);
 			notificacion.addThemeVariants(NotificationVariant.LUMO_ERROR);
 			notificacion.setDuration(20000);
