@@ -108,6 +108,8 @@ public class ConsultaView extends Div implements ConsultaViewModel {
 
 		// ACCION DE BOTONES
 		Button resetBtn = new Button("Limpiar");
+		//<theme-editor-local-classname>
+		resetBtn.addClassName("consulta-view-button-1");
 		// <theme-editor-local-classname>
 		resetBtn.addClassName("consulta-view-button-1");
 		resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);

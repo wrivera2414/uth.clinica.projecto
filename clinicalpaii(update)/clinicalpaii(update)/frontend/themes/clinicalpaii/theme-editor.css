@@ -1,0 +1,9 @@
+/*
+ * This file has been created by the Vaadin Theme Editor. Please note that
+ * manual changes to individual CSS properties may be overwritten by the theme editor.
+ */
+h1.main-layout-h1-1 { color:var(--lumo-primary-text-color); }
+
+vaadin-button.consulta-view-button-1 { background-color:rgba(145,128,255,0.05); }
+
+vaadin-button.consulta-view-button-1::part(label) { color:rgba(255,90,8,1); }
