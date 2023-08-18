@@ -2,8 +2,6 @@ package hn.clinica.data.controller;
 
 import java.io.IOException;
 
-import org.hibernate.internal.util.type.PrimitiveWrapperHelper.BooleanDescriptor;
-
 import hn.clinica.data.entity.CLINICARepositoryImpl;
 import hn.clinica.data.entity.Consulta;
 import hn.clinica.data.entity.Pacientes;
@@ -32,35 +30,45 @@ public class ConsultaInteractorImpl implements ConsultaInteractor {
 	public void consultarConsultas() {
 		try {
 			ResponseConsulta respuesta = this.modelo.getConsulta();
-			this.vista.refrescarGridConsulta(respuesta.getItems());;
+			this.vista.refrescarGridConsulta(respuesta.getItems());
+			;
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-/*
-	@Override
-	public void crearPacientes(Pacientes nuevo) {
 
-	}
-*/
-
+	// Consulta para llenar ComboBox con pacientes
 	@Override
-	public void actualizarConsulta(Consulta actualizada) {
+	public void consultarPacientes() {
 		try {
-			boolean respuesta = this.modelo.updateConsulta(actualizada);
-			this.vista.mostrarMensajeActualizacion(respuesta);
-		}catch(IOException e) {
+			ResponsePacientes respuesta = this.modelo.getPacientes();
+			this.vista.refrescarComboBoxPacientes(respuesta.getItems());
+
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	// Consulta para llenar ComboBox con Medicamentos
 	@Override
 	public void consultarMedicamentos() {
 		try {
 			ResponseMedicamento respuesta = this.modelo.getMedicamento();
-			this.vista.refrescarConsultaMedicamentos(respuesta.getItems());
-		}catch(IOException e) {
+			this.vista.refrescarComboBoxMedicamentos(respuesta.getItems());
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void CrearConsulta(Consulta nuevo) {
+		try {
+			boolean respuesta = this.modelo.crearNuevaConsulta(nuevo);
+			this.vista.mostrarMensajeCreacion(respuesta);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

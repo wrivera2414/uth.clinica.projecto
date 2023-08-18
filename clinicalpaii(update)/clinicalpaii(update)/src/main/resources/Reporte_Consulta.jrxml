@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Leaf_Red" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8e15d519-eab3-497d-b483-a5c1caac3ee0">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Title" fontName="Arial" fontSize="26" isBold="true"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<parameter name="LOGO_DIR" class="java.lang.String"/>
+	<parameter name="TEXT" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="IDENTIDAD" class="java.lang.String"/>
+	<field name="PACIENTE" class="java.lang.String"/>
+	<field name="TELEFONO" class="java.lang.String"/>
+	<field name="MEDICAMENTO" class="java.lang.String"/>
+	<field name="STOCK" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="101" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="110" backcolor="#092230" uuid="6f8542a5-69f9-4a2b-a392-03df7a1424f3"/>
+				<image scaleImage="FillFrame">
+					<reportElement x="460" y="10" width="113" height="80" uuid="f6b17e96-9ae7-4d47-9f3d-0e597b78ce2c"/>
+					<imageExpression><![CDATA[$P{LOGO_DIR}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement style="Title" mode="Opaque" x="40" y="20" width="350" height="60" forecolor="#E6E6FF" backcolor="#092230" uuid="91f5fe7f-a65f-46a3-81ae-30f2d82c45a2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="33"/>
+					</textElement>
+					<text><![CDATA[Reporte de Consulta]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="39" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="555" height="1" uuid="2c4ebb21-8745-45a1-a9ad-477acaac72cb"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="148" height="30" uuid="bc366ed2-d584-4244-b6bf-f12963c976cd"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[IDENTIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="150" y="1" width="106" height="30" uuid="51d210df-6488-4469-9340-f12399f275a5"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PACIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="2" width="70" height="26" uuid="46a6e924-967c-490b-aa2e-e3e419f38866"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TELEFONO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="359" y="-1" width="102" height="28" uuid="67cf7b9a-f757-4a86-b25f-c4fe35c59146"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MEDICAMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="490" y="0" width="56" height="31" uuid="be77190d-b68d-4980-8b85-e0810a698d2d"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[STOCK]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="51" splitType="Stretch">
+			<textField>
+				<reportElement x="10" y="11" width="136" height="31" uuid="c0a13501-6737-4add-94f5-1ae2c430ffb2"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{IDENTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="146" y="10" width="110" height="30" uuid="f97179a8-6a00-4139-9127-b8fe75640350"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{PACIENTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="270" y="10" width="70" height="30" uuid="cb261a01-bffa-4741-9d66-73c784c503f5"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{TELEFONO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="11" width="100" height="30" uuid="523692a5-b0b2-40b7-8be6-52be874497ff"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{MEDICAMENTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="490" y="12" width="55" height="30" uuid="e8f39a13-3ba3-4daa-8b0f-970e660331be"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{STOCK}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="50" width="555" height="1" uuid="30093aa1-3dd7-4eea-9cc9-e183637af8f4"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="34" splitType="Stretch">
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="10" y="14" width="197" height="16" uuid="c49bc611-71b3-4860-8112-76288860b48d"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20" uuid="c9e9a989-76ae-4c92-a08c-dba3c3185f04"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" De"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20" uuid="736cac2d-8f9a-48bb-b4e7-09302ce0e313"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

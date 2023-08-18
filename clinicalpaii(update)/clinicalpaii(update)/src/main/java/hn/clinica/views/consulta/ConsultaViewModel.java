@@ -11,7 +11,9 @@ import hn.clinica.data.entity.Pacientes;
 public interface ConsultaViewModel {
 
 	void refrescarGridConsulta(List<Consulta> consulta);
-	void mostrarMensajeActualizacion(boolean exito);
-	void refrescarConsultaMedicamentos(List<Medicamentos> medicamento);
 	void beforeEnter(BeforeEnterEvent event);
+
+    void refrescarComboBoxPacientes(List<Pacientes> items);
+    void refrescarComboBoxMedicamentos(List<Medicamentos> items);
+    void mostrarMensajeCreacion(boolean respuesta);
 }

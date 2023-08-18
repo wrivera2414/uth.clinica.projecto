@@ -153,13 +153,11 @@ public class CLINICARepositoryImpl {
 
 			}
 		}
-		public boolean updateConsulta(Consulta actualizada) throws IOException {
-			Call<ResponseBody> call = this.client.getDataService().actualizarConsulta(actualizada);
+		public boolean crearNuevaConsulta(Consulta nuevo) throws IOException {
+			Call<ResponseBody> call = this.client.getDataService().crearConsulta(nuevo);
 			Response<ResponseBody> response = call.execute();
 			return response.isSuccessful();
 		}
-
-		
 
 		
 }

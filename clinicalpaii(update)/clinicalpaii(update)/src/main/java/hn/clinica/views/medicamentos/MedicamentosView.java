@@ -6,11 +6,14 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -18,14 +21,27 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
+
 import hn.clinica.data.controller.MedicamentosInteractor;
 import hn.clinica.data.controller.MedicamentosInteractorImpl;
 import hn.clinica.data.entity.Citas;
+import hn.clinica.data.entity.Consulta;
+import hn.clinica.data.entity.ConsultaReporte;
 import hn.clinica.data.entity.Medicamentos;
+import hn.clinica.data.entity.MedicamentosReporte;
+import hn.clinica.data.service.ReportGenerator;
 import hn.clinica.views.MainLayout;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @PageTitle("Medicamentos")
 @Route(value = "medicamentos", layout = MainLayout.class)
@@ -48,14 +64,69 @@ public class MedicamentosView extends Div implements MedicamentosViewModel{
     public MedicamentosView() {
         setSizeFull();
         addClassNames("medicamentos-view");
+        //medicamentos = new ArrayList<>();        
+        codigo.addClassName(Margin.Right.LARGE);
+        nombre.addClassName(Margin.Right.LARGE);
+        fabricante.addClassName(Margin.Right.LARGE);
+        principioa.addClassName(Margin.Right.LARGE);
+        fechav.addClassName(Margin.Right.LARGE);
+        stock.addClassName(Margin.Right.LARGE);
+        
         this.controlador = new MedicamentosInteractorImpl(this);
+    	
         VerticalLayout layout = new VerticalLayout(createMobileFilters(), Filters(), createGrid());
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
         add(layout);
+        
+        GridContextMenu<Medicamentos> menu = grid.addContextMenu();
+     	menu.addItem("Generar Reporte", event -> {
+     		if(this.medicamentos.isEmpty()) {
+         		Notification.show("No hay datos para generar el reporte");
+         	}else {
+         		Notification.show("Generando reporte PDF...");
+         		generarReporteConsulta();
+         	}
+     	});
     }
 
+    
+    private void generarReporteConsulta() {
+		ReportGenerator generador = new ReportGenerator(); 
+		Map<String, Object> parametros = new HashMap<>();
+		parametros.put("LOGO_DIR", "loguito.png");
+		parametros.put("LOGO_BAR", "loguito.png");
+		MedicamentosReporte datasource = new MedicamentosReporte();
+		datasource.setData(medicamentos);
+		String generado = generador.generarReportePDF("Reporte_Medicamentos", parametros, datasource);
+	    if(generado != null) {
+	    	StreamResource resource = new StreamResource("Reporte de Orden Consulta.pdf", () -> {
+                try {
+                    return new FileInputStream(generado);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            });
+	    	
+	    	//String ubicacion = generador.getUbicacion();
+	    	Anchor url = new Anchor(resource, "Abrir reporte PDF");
+			url.setTarget("_Blank"); 
+			add(url);
+			
+			Notification notificacion = new Notification(url);
+			notificacion.addThemeVariants(NotificationVariant.LUMO_ERROR);
+			notificacion.setDuration(20000);
+			notificacion.open();
+		}else {
+			Notification notificacion = new Notification("Ocurrió un problema al generar el reporte");
+			notificacion.addThemeVariants(NotificationVariant.LUMO_ERROR);
+			notificacion.setDuration(10000);
+			notificacion.open();
+	    }
+	
+	}
     private HorizontalLayout createMobileFilters() {
         // Mobile version
         HorizontalLayout mobileFilters = new HorizontalLayout();
@@ -119,7 +190,7 @@ public class MedicamentosView extends Div implements MedicamentosViewModel{
                 	
                 }
             });
-
+            
             Div actions = new Div(resetBtn, searchBtn);
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
