@@ -125,11 +125,12 @@ public interface CLINICARepository {
 	
 	@GET("pls/apex/wencellr_pav2_98_2/clinica/Consulta/")
 	Call<ResponseConsulta> obtenerConsulta();
+	
 	@Headers({
 		"Content-Type: application/json",
 		"Accept-Charset: utf-8",
 		"User-Agent: Retrofit-Sample-App"
 	})
-	@PUT("pls/apex/wencellr_pav2_98_2/clinica/Consulta/")
-	Call<ResponseBody> actualizarConsulta(@Body Consulta actualizada);
+	@POST("pls/apex/wencellr_pav2_98_2/clinica/Consulta/")
+	Call<ResponseBody> crearConsulta(@Body Consulta consulta);
 }
