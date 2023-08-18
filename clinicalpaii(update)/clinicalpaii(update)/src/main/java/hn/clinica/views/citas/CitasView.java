@@ -41,7 +41,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.HashMap;
 
-import org.hibernate.bytecode.internal.bytebuddy.PrivateAccessorException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Citas")

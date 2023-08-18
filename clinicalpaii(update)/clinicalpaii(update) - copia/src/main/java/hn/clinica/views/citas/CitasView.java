@@ -38,11 +38,6 @@ import com.vaadin.flow.component.progressbar.ProgressBar;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.HashMap;
-
-import org.hibernate.bytecode.internal.bytebuddy.PrivateAccessorException;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Citas")
 @Route(value = "citas/:citasID?/:action?(edit)", layout = MainLayout.class)
